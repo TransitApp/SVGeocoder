@@ -24,7 +24,7 @@ SMGeocoder *rGeocoderRequest = [[SMGeocoder alloc] initWithCoordinate:coordinate
 [rGeocoderRequest startAsynchronous];
 </pre>
 
-h2. Using the delegate
+h2. Adopting the SMGeocoderDelegate protocol
 
 On success, SMGeocoder will return a "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html object.
 
