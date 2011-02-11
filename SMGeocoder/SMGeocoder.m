@@ -30,6 +30,8 @@
 	NSString *urlEncodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)address, NULL, CFSTR("?=&+"), kCFStringEncodingUTF8);
 	
 	NSString *requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&sensor=true", urlEncodedAddress];
+	[urlEncodedAddress release];
+	
 	NSLog(@"SMGeocoder -> geocoding: %@", address);
 	
 	request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:requestString]];
