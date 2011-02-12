@@ -6,10 +6,10 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "SMGeocoderAppAppDelegate.h"
-#import "SMGeocoderAppViewController.h"
+#import "SVGeocoderAppAppDelegate.h"
+#import "SVGeocoderAppViewController.h"
 
-@implementation SMGeocoderAppAppDelegate
+@implementation SVGeocoderAppAppDelegate
 
 @synthesize window;
 @synthesize viewController;

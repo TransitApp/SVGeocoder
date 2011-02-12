@@ -1,15 +1,15 @@
 //
-//  SMGeocoderAppViewController.h
-//  SMGeocoderApp
+//  SVGeocoderAppViewController.h
+//  SVGeocoderApp
 //
 //  Created by Sam Vermette on 11.02.11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "SMGeocoder.h"
+#import "SVGeocoder.h"
 
-@interface SMGeocoderAppViewController : UIViewController <SMGeocoderDelegate> {
+@interface SVGeocoderAppViewController : UIViewController <SVGeocoderDelegate> {
 	IBOutlet UITextField *latField, *lngField, *addressField;
 }
 

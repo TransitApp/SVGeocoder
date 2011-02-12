@@ -1,16 +1,16 @@
-h1. SMGeocoder
+h1. SVGeocoder
 
-SMGeocoder fills the lack of a forward geocoding class on iOS, and is an improved alternative to Apple's very unreliable MKReverseGeocoder. It uses the "Google Geocoding API":http://code.google.com/apis/maps/documentation/geocoding/ as its data provider so make sure you read their "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SMGeocoder. 
+SVGeocoder fills the lack of a forward geocoding class on iOS, and is an improved alternative to Apple's very unreliable MKReverseGeocoder. It uses the "Google Geocoding API":http://code.google.com/apis/maps/documentation/geocoding/ as its data provider so make sure you read their "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
 
 h2. Installation
 
-Easiest way to install is to drag the SMGeocoder/SMGeocoder folder to your project. That will add both the SMGeocoder class and the required "TouchJSON":https://github.com/TouchCode/TouchJSON parser. SMGeocoder also requires the *CoreLocation*, *MapKit* and *AddressBook* frameworks. So make sure you add these to your project.
+Easiest way to install is to drag the SVGeocoder/SVGeocoder folder to your project. That will add both the SVGeocoder class and the required "TouchJSON":https://github.com/TouchCode/TouchJSON parser. SVGeocoder also requires the *CoreLocation*, *MapKit* and *AddressBook* frameworks. So make sure you add these to your project.
 
 h2. Using the Geocoder:
 
 <pre>
 NSString *addressString = @"3245 St-Denis, Montreal"
-SMGeocoder *geocodeRequest = [[SMGeocoder alloc] initWithAddress:addressString];
+SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:addressString];
 [geocodeRequest setDelegate:self];
 [geocodeRequest startAsynchronous];
 </pre>
@@ -19,21 +19,21 @@ h2. Using the Reverse Geocoder:
 
 <pre>
 CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(45.54181, -73.62928);
-SMGeocoder *rGeocoderRequest = [[SMGeocoder alloc] initWithCoordinate:coordinate];
+SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate];
 [rGeocoderRequest setDelegate:self];
 [rGeocoderRequest startAsynchronous];
 </pre>
 
-h2. Adopting the SMGeocoderDelegate protocol
+h2. Adopting the SVGeocoderDelegate protocol
 
-On success, SMGeocoder will return a "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html object.
+On success, SVGeocoder will return a "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html object.
 
 <pre>
-- (void)geocoder:(SMGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark;
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark;
 </pre>
 
-SMGeocoder will return an error if Google didn't return any placemark of if there is no connectivity.
+SVGeocoder will return an error if Google didn't return any placemark of if there is no connectivity.
 
 <pre>
-- (void)geocoder:(SMGeocoder *)geocoder didFailWithError:(NSError *)error;
+- (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
 </pre>

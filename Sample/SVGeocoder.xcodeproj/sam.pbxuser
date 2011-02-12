@@ -1,0 +1,179 @@
+// !$*UTF8*$!
+{
+	1D3623240D0F684500981E51 /* SVGeocoderAppAppDelegate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1379, 345}}";
+			sepNavSelRange = "{158, 0}";
+			sepNavVisRange = "{96, 329}";
+		};
+	};
+	1D3623250D0F684500981E51 /* SVGeocoderAppAppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {2244, 1350}}";
+			sepNavSelRange = "{327, 0}";
+			sepNavVisRange = "{0, 720}";
+		};
+	};
+	1D6058900D05DD3D006BFB54 /* SVGeocoder */ = {
+		activeExec = 0;
+		executables = (
+			22B7DF7C1305B9740014DB40 /* SVGeocoder */,
+		);
+	};
+	2278297713061BD100CCA1B9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF60DDB3853001CB0EB /* SVGeocoderAppViewController.h */;
+		name = "SVGeocoderAppViewController.h: 12";
+		rLen = 27;
+		rLoc = 221;
+		rType = 0;
+		vrLen = 409;
+		vrLoc = 0;
+	};
+	2278297813061BD100CCA1B9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF70DDB3853001CB0EB /* SVGeocoderAppViewController.m */;
+		name = "SVGeocoderAppViewController.m: 16";
+		rLen = 0;
+		rLoc = 277;
+		rType = 0;
+		vrLen = 1076;
+		vrLoc = 250;
+	};
+	2278298713061BDD00CCA1B9 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* SVGeocoderApp-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/sam/Documents/iPhone/SVGeocoder/Sample/SVGeocoderApp-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	2278299213061BFA00CCA1B9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* SVGeocoderAppAppDelegate.m */;
+		name = "SVGeocoderAppAppDelegate.m: 16";
+		rLen = 0;
+		rLoc = 327;
+		rType = 0;
+		vrLen = 720;
+		vrLoc = 0;
+	};
+	227829AD13061C6000CCA1B9 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623240D0F684500981E51 /* SVGeocoderAppAppDelegate.h */;
+		name = "SVGeocoderAppAppDelegate.h: 8";
+		rLen = 0;
+		rLoc = 158;
+		rType = 0;
+		vrLen = 516;
+		vrLoc = 0;
+	};
+	22B7DF7C1305B9740014DB40 /* SVGeocoder */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = SVGeocoder;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	22B7DF8A1305B9760014DB40 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	22B7DF8B1305B9760014DB40 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	28D7ACF60DDB3853001CB0EB /* SVGeocoderAppViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1094, 417}}";
+			sepNavSelRange = "{221, 27}";
+			sepNavVisRange = "{0, 409}";
+		};
+	};
+	28D7ACF70DDB3853001CB0EB /* SVGeocoderAppViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1580, 810}}";
+			sepNavSelRange = "{277, 0}";
+			sepNavVisRange = "{250, 602}";
+		};
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 22B7DF7C1305B9740014DB40 /* SVGeocoder */;
+		activeSDKPreference = iphonesimulator4.2;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* SVGeocoder */;
+		addToTargets = (
+			1D6058900D05DD3D006BFB54 /* SVGeocoder */,
+		);
+		codeSenseManager = 22B7DF8B1305B9760014DB40 /* Code sense */;
+		executables = (
+			22B7DF7C1305B9740014DB40 /* SVGeocoder */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					916,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 319167608;
+			PBXWorkspaceStateSaveDate = 319167608;
+		};
+		perUserProjectItems = {
+			2278297713061BD100CCA1B9 /* PBXTextBookmark */ = 2278297713061BD100CCA1B9 /* PBXTextBookmark */;
+			2278297813061BD100CCA1B9 /* PBXTextBookmark */ = 2278297813061BD100CCA1B9 /* PBXTextBookmark */;
+			2278298713061BDD00CCA1B9 /* PlistBookmark */ = 2278298713061BDD00CCA1B9 /* PlistBookmark */;
+			2278299213061BFA00CCA1B9 /* PBXTextBookmark */ = 2278299213061BFA00CCA1B9 /* PBXTextBookmark */;
+			227829AD13061C6000CCA1B9 /* PBXTextBookmark */ = 227829AD13061C6000CCA1B9 /* PBXTextBookmark */;
+		};
+		sourceControlManager = 22B7DF8A1305B9760014DB40 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+}

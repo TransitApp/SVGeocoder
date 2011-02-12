@@ -1,38 +1,38 @@
 //
-//  SMGeocoder.m
+//  SVGeocoder.m
 //
 //  Created by Sam Vermette on 07.02.11.
 //  Copyright 2011 Sam Vermette. All rights reserved.
 //
 
-#import "SMGeocoder.h" 
+#import "SVGeocoder.h" 
 
 #import "CJSONDeserializer.h"
 
-@implementation SMGeocoder
+@implementation SVGeocoder
 
 @synthesize delegate;
 
 #pragma mark -
 
-- (SMGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
+- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
 	
 	NSString *requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true", coordinate.latitude, coordinate.longitude];
-	NSLog(@"SMGeocoder -> reverse geocoding: %f, %f", coordinate.latitude, coordinate.longitude);
+	NSLog(@"SVGeocoder -> reverse geocoding: %f, %f", coordinate.latitude, coordinate.longitude);
 	
 	request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:requestString]];
 	
 	return self;
 }
 
-- (SMGeocoder*)initWithAddress:(NSString*)address {
+- (SVGeocoder*)initWithAddress:(NSString*)address {
 	
 	NSString *urlEncodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)address, NULL, CFSTR("?=&+"), kCFStringEncodingUTF8);
 	
 	NSString *requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&sensor=true", urlEncodedAddress];
 	[urlEncodedAddress release];
 	
-	NSLog(@"SMGeocoder -> geocoding: %@", address);
+	NSLog(@"SVGeocoder -> geocoding: %@", address);
 	
 	request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:requestString]];
 
@@ -41,7 +41,7 @@
 
 #pragma mark -
 
-- (void)setDelegate:(id <SMGeocoderDelegate>)newDelegate {
+- (void)setDelegate:(id <SVGeocoderDelegate>)newDelegate {
 	
 	delegate = newDelegate;
 }
@@ -109,14 +109,14 @@
 	MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
 	[formattedAddressDict release];
 	
-	NSLog(@"SMGeocoder -> Found Placemark");
+	NSLog(@"SVGeocoder -> Found Placemark");
 	[self.delegate geocoder:self didFindPlacemark:placemark];
 	[placemark release];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	
-	NSLog(@"SMGeocoder -> Failed with error: %@", [error localizedDescription]);
+	NSLog(@"SVGeocoder -> Failed with error: %@", [error localizedDescription]);
 	
 	[self.delegate geocoder:self didFailWithError:error];
 }

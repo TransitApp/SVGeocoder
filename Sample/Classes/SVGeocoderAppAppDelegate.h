@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@class SMGeocoderAppViewController;
+@class SVGeocoderAppViewController;
 
-@interface SMGeocoderAppAppDelegate : NSObject <UIApplicationDelegate> {
+@interface SVGeocoderAppAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
-    SMGeocoderAppViewController *viewController;
+    SVGeocoderAppViewController *viewController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet SMGeocoderAppViewController *viewController;
+@property (nonatomic, retain) IBOutlet SVGeocoderAppViewController *viewController;
 
 @end
 

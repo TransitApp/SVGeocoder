@@ -1,37 +1,37 @@
 //
-//  SMGeocoderAppViewController.m
-//  SMGeocoderApp
+//  SVGeocoderAppViewController.m
+//  SVGeocoderApp
 //
 //  Created by Sam Vermette on 11.02.11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "SMGeocoderAppViewController.h"
+#import "SVGeocoderAppViewController.h"
 
 
-@implementation SMGeocoderAppViewController
+@implementation SVGeocoderAppViewController
 
 
 - (void)reverseGeocode {
-	SMGeocoder *geocodeRequest = [[SMGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake([latField.text floatValue], [lngField.text floatValue])];
+	SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake([latField.text floatValue], [lngField.text floatValue])];
 	[geocodeRequest setDelegate:self];
 	[geocodeRequest startAsynchronous];
 }
 
 - (void)geocode {
-	SMGeocoder *geocodeRequest = [[SMGeocoder alloc] initWithAddress:addressField.text];
+	SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:addressField.text];
 	[geocodeRequest setDelegate:self];
 	[geocodeRequest startAsynchronous];
 }
 
-- (void)geocoder:(SMGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
 	
 	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[[placemark addressDictionary] description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
 	[alertView release];
 }
 
-- (void)geocoder:(SMGeocoder *)geocoder didFailWithError:(NSError *)error {
+- (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error {
 	
 	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
