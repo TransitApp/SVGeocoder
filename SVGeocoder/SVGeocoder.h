@@ -13,9 +13,7 @@
 @protocol SVGeocoderDelegate;
 
 @interface SVGeocoder : NSObject {
-    NSMutableData *responseData;
-	NSURLConnection *rConnection;
-	NSURLRequest *request;
+
 }
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;

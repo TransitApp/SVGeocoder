@@ -6,12 +6,19 @@
 //
 
 #import "SVGeocoder.h" 
-
 #import "CJSONDeserializer.h"
+
+@interface SVGeocoder ()
+
+@property (nonatomic, assign) NSMutableData *responseData;
+@property (nonatomic, assign) NSURLConnection *rConnection;
+@property (nonatomic, assign) NSURLRequest *request;
+
+@end
 
 @implementation SVGeocoder
 
-@synthesize delegate;
+@synthesize delegate, responseData, rConnection, request;
 
 #pragma mark -
 
