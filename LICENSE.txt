@@ -22,5 +22,5 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 A different license may apply to other software included in this package, 
-including Jonathan Wight's TouchJSON class. Please consult their 
+including John Engelhart's JSONKit class. Please consult their 
 respective headers for the terms of their individual licenses.
