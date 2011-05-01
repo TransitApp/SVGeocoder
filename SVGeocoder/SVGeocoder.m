@@ -6,43 +6,53 @@
 //
 
 #import "SVGeocoder.h" 
-#import "CJSONDeserializer.h"
+#import "JSONKit.h"
 
 @interface SVGeocoder ()
 
+@property (nonatomic, retain) NSString *requestString;
 @property (nonatomic, assign) NSMutableData *responseData;
 @property (nonatomic, assign) NSURLConnection *rConnection;
-@property (nonatomic, assign) NSURLRequest *request;
+@property (nonatomic, retain) NSURLRequest *request;
 
 @end
 
 @implementation SVGeocoder
 
-@synthesize delegate, responseData, rConnection, request;
+@synthesize delegate, requestString, responseData, rConnection, request;
 
 #pragma mark -
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
 	
-	NSString *requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true", coordinate.latitude, coordinate.longitude];
-	NSLog(@"SVGeocoder -> reverse geocoding: %f, %f", coordinate.latitude, coordinate.longitude);
+	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true", coordinate.latitude, coordinate.longitude];
 	
-	request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:requestString]];
+	NSLog(@"SVGeocoder -> %@", self.requestString);
+
+	return self;
+}
+
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(MKCoordinateRegion)region {
+			
+	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&bounds=%f,%f|%f,%f&sensor=true", 
+						  address,
+						  region.center.latitude-(region.span.latitudeDelta/2.0),
+						  region.center.longitude-(region.span.longitudeDelta/2.0),
+						  region.center.latitude+(region.span.latitudeDelta/2.0),
+						  region.center.longitude+(region.span.longitudeDelta/2.0)];
+	
+	NSLog(@"SVGeocoder -> %@", self.requestString);
 	
 	return self;
 }
 
+
 - (SVGeocoder*)initWithAddress:(NSString*)address {
 	
-	NSString *urlEncodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)address, NULL, CFSTR("?=&+"), kCFStringEncodingUTF8);
+	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&sensor=true", address];
 	
-	NSString *requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&sensor=true", urlEncodedAddress];
-	[urlEncodedAddress release];
+	NSLog(@"SVGeocoder -> %@", self.requestString);
 	
-	NSLog(@"SVGeocoder -> geocoding: %@", address);
-	
-	request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:requestString]];
-
 	return self;
 }
 
@@ -56,8 +66,10 @@
 
 - (void)startAsynchronous {
 	
-	responseData = [[NSMutableData alloc] init];
+	NSString *escapedString = [self.requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	self.request = [NSURLRequest requestWithURL:[NSURL URLWithString:escapedString]];
 	
+	responseData = [[NSMutableData alloc] init];
 	rConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
 
@@ -73,7 +85,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	NSError *jsonError = NULL;
-	NSDictionary *responseDict = [[CJSONDeserializer deserializer] deserializeAsDictionary:responseData error:&jsonError];
+	NSDictionary *responseDict = [responseData objectFromJSONData];
 	
 	if(responseDict == nil || [responseDict valueForKey:@"results"] == nil || [[responseDict valueForKey:@"results"] count] == 0) {
 		[self connection:connection didFailWithError:jsonError];
@@ -123,7 +135,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	
-	NSLog(@"SVGeocoder -> Failed with error: %@", [error localizedDescription]);
+	NSLog(@"SVGeocoder -> Failed with error: %@, (%@)", [error localizedDescription], [[request URL] absoluteString]);
 	
 	[self.delegate geocoder:self didFailWithError:error];
 }
@@ -132,7 +144,8 @@
 
 - (void)dealloc {
 	
-	[request release];
+	self.request = nil;
+	
 	[responseData release];
 	[rConnection release];
 	

@@ -19,6 +19,7 @@
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(MKCoordinateRegion)region;
 - (SVGeocoder*)initWithAddress:(NSString*)address;
 
 - (void)startAsynchronous;
