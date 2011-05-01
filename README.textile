@@ -27,7 +27,7 @@ SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate
 
 h2. Adopting the SVGeocoderDelegate protocol
 
-On success, SVGeocoder will return an SVPlacemark object (which is a  "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass with a @coordinate@ property — useful for forward geocoding):
+On success, SVGeocoder will return an SVPlacemark object (a  "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass with a @coordinate@ property):
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
