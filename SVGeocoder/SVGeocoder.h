@@ -10,6 +10,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 
+#import "SVPlacemark.h"
+
 @protocol SVGeocoderDelegate;
 
 @interface SVGeocoder : NSObject {
@@ -20,7 +22,7 @@
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(MKCoordinateRegion)region;
-- (SVGeocoder*)initWithAddress:(NSString*)address;
+- (SVGeocoder*)initWithAddress:(NSString *)address;
 
 - (void)startAsynchronous;
 
@@ -29,7 +31,7 @@
 
 @protocol SVGeocoderDelegate
 
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark;
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
 - (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
 
 @end

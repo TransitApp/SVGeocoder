@@ -24,9 +24,9 @@
 	[geocodeRequest startAsynchronous];
 }
 
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark {
 	
-	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[[placemark addressDictionary] description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
 	[alertView release];
 }

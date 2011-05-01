@@ -14,6 +14,7 @@
 		220BC2ED1347FDF600D0DD26 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 220BC2E91347FDF600D0DD26 /* CHANGELOG.md */; };
 		220BC2EE1347FDF600D0DD26 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 220BC2EB1347FDF600D0DD26 /* JSONKit.m */; };
 		220BC2EF1347FDF600D0DD26 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 220BC2EC1347FDF600D0DD26 /* README.md */; };
+		2215D386136DE916007A3351 /* SVPlacemark.m in Sources */ = {isa = PBXBuildFile; fileRef = 2215D385136DE916007A3351 /* SVPlacemark.m */; };
 		227829E313061C8C00CCA1B9 /* SVGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 227829CB13061C8C00CCA1B9 /* SVGeocoder.m */; };
 		22B7DFAE1305BA170014DB40 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B7DFAD1305BA170014DB40 /* AddressBook.framework */; };
 		22B7DFEB1305BA250014DB40 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B7DFEA1305BA250014DB40 /* MapKit.framework */; };
@@ -34,6 +35,8 @@
 		220BC2EA1347FDF600D0DD26 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		220BC2EB1347FDF600D0DD26 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		220BC2EC1347FDF600D0DD26 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		2215D384136DE916007A3351 /* SVPlacemark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPlacemark.h; sourceTree = "<group>"; };
+		2215D385136DE916007A3351 /* SVPlacemark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVPlacemark.m; sourceTree = "<group>"; };
 		227829CA13061C8C00CCA1B9 /* SVGeocoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGeocoder.h; sourceTree = "<group>"; };
 		227829CB13061C8C00CCA1B9 /* SVGeocoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGeocoder.m; sourceTree = "<group>"; };
 		22B7DFAD1305BA170014DB40 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
@@ -101,6 +104,8 @@
 			children = (
 				227829CA13061C8C00CCA1B9 /* SVGeocoder.h */,
 				227829CB13061C8C00CCA1B9 /* SVGeocoder.m */,
+				2215D384136DE916007A3351 /* SVPlacemark.h */,
+				2215D385136DE916007A3351 /* SVPlacemark.m */,
 				220BC2E81347FDF600D0DD26 /* JSONKit */,
 			);
 			name = SVGeocoder;
@@ -220,6 +225,7 @@
 				28D7ACF80DDB3853001CB0EB /* SVGeocoderAppViewController.m in Sources */,
 				227829E313061C8C00CCA1B9 /* SVGeocoder.m in Sources */,
 				220BC2EE1347FDF600D0DD26 /* JSONKit.m in Sources */,
+				2215D386136DE916007A3351 /* SVPlacemark.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

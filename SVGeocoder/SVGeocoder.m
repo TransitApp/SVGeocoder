@@ -125,7 +125,7 @@
 		}
 	}
 	
-	MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
+	SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
 	[formattedAddressDict release];
 	
 	NSLog(@"SVGeocoder -> Found Placemark");
