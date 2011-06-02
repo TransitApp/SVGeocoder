@@ -21,6 +21,20 @@
 
 @synthesize delegate, requestString, responseData, rConnection, request;
 
+
+#pragma mark -
+
+- (void)dealloc {
+	
+	self.request = nil;
+	self.requestString = nil;
+	
+	[responseData release];
+	[rConnection release];
+	
+	[super dealloc];
+}
+
 #pragma mark -
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
@@ -140,16 +154,5 @@
 	[self.delegate geocoder:self didFailWithError:error];
 }
 
-#pragma mark -
-
-- (void)dealloc {
-	
-	self.request = nil;
-	
-	[responseData release];
-	[rConnection release];
-	
-	[super dealloc];
-}
 
 @end
