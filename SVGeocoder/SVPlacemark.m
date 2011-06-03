@@ -15,7 +15,7 @@
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)aCoordinate addressDictionary:(NSDictionary *)addressDictionary {
 	
-	if(self = [super initWithCoordinate:aCoordinate addressDictionary:addressDictionary])
+	if((self = [super initWithCoordinate:aCoordinate addressDictionary:addressDictionary]))
 		self.coordinate = aCoordinate;
 	
 	return self;
