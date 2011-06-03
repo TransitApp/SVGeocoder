@@ -20,10 +20,13 @@
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
 
+// Reverse Geocoder
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
-- (SVGeocoder*)initWithAddress:(NSString *)address withBounds:(MKCoordinateRegion)region;
-- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)region;
+
+// (forward) Geocoder
 - (SVGeocoder*)initWithAddress:(NSString *)address;
+- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)bounds;
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
 
 - (void)startAsynchronous;
 

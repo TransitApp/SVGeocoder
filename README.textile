@@ -16,6 +16,13 @@ SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:addressString];
 [geocodeRequest startAsynchronous];
 </pre>
 
+Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameters to fine-tune your search:
+
+<pre>
+- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)bounds;
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
+</pre>
+
 h2. Using the Reverse Geocoder:
 
 <pre>
@@ -27,7 +34,7 @@ SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate
 
 h2. Adopting the SVGeocoderDelegate protocol
 
-On success, SVGeocoder will return an SVPlacemark object (a  "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass with a @coordinate@ property):
+On success, SVGeocoder will return an @SVPlacemark@ object (a  "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass with a @coordinate@ property):
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;

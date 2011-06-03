@@ -46,7 +46,7 @@
 	return self;
 }
 
-- (SVGeocoder*)initWithAddress:(NSString *)address withBounds:(MKCoordinateRegion)region {
+- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
 			
 	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&bounds=%f,%f|%f,%f&sensor=true", 
 						  address,
@@ -60,11 +60,11 @@
 	return self;
 }
 
-- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)region {
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString {
 	
 	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&region=%@&sensor=true", 
 						  address,
-						  region];
+						  regionString];
 	
 	NSLog(@"SVGeocoder -> %@", self.requestString);
 	
