@@ -57,15 +57,17 @@ h2. About the SVPlacemark object
 SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass but with a @coordinate@ property. Here's what an SVPlacemark object looks like:
 
 <pre>
-address = {
-	Country = Canada;
-	CountryCode = CA;
-	State = Quebec;
-	Street = "3456 Rue Denis";
-	ZIP = "J0K 1S0";
-};
-coordinate = {
-	latitude = "46.01529";
-	longitude = "-73.76997";
-};
+{
+	address = {
+		Country = Canada;
+		CountryCode = CA;
+		State = Quebec;
+		Street = "3456 Rue Denis";
+		ZIP = "J0K 1S0";
+	},
+	coordinate = {
+		latitude = "46.01529";
+		longitude = "-73.76997";
+	}
+}
 </pre>
