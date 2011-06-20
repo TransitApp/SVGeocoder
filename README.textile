@@ -1,6 +1,6 @@
 h1. SVGeocoder
 
-SVGeocoder fills the lack of a forward geocoding class on iOS, and is an improved alternative to Apple's unreliable MKReverseGeocoder. It uses "JSONKit":https://github.com/johnezang/JSONKit as well as the "Google Geocoding API":http://code.google.com/apis/maps/documentation/geocoding/ as its data provider so make sure you read their "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
+SVGeocoder fills the lack of a forward geocoding class on iOS, and is an improved alternative to Apple's unreliable @MKReverseGeocoder@. It uses "JSONKit":https://github.com/johnezang/JSONKit as well as the "Google Geocoding API":http://code.google.com/apis/maps/documentation/geocoding/ as its data provider so make sure you read their "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
 
 h2. Installation
 
@@ -40,7 +40,7 @@ On success, SVGeocoder will return an @SVPlacemark@ object:
 - (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
 </pre>
 
-Or an array of SVPlacemark objects (if you want multiple results or pick the most relevant placemark yourself):
+Or an array of @SVPlacemark@ objects (if you want multiple results or pick the most relevant placemark yourself):
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks;
@@ -57,7 +57,7 @@ h2. About the SVPlacemark object
 SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass but with a @coordinate@ property. Here's what an SVPlacemark object looks like:
 
 <pre>
-	address =     {
+address =     {
         Country = Canada;
         CountryCode = CA;
         State = Quebec;
