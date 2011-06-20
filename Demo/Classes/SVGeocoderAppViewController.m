@@ -3,7 +3,7 @@
 //  SVGeocoderApp
 //
 //  Created by Sam Vermette on 11.02.11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 Sam Vermette. All rights reserved.
 //
 
 #import "SVGeocoderAppViewController.h"
@@ -31,29 +31,18 @@
 	[alertView release];
 }
 
+//- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks {
+//    
+//    for(SVPlacemark *placemark in placemarks)
+//        NSLog(@"placemark = %@", [placemark description]);
+//}
+
 - (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error {
 	
 	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
 	[alertView release];
 	
-}
-
-- (void)didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload {
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-}
-
-
-- (void)dealloc {
-    [super dealloc];
 }
 
 @end

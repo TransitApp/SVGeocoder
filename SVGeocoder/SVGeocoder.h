@@ -14,9 +14,7 @@
 
 @protocol SVGeocoderDelegate;
 
-@interface SVGeocoder : NSObject {
-
-}
+@interface SVGeocoder : NSObject
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
 
@@ -35,7 +33,9 @@
 
 @protocol SVGeocoderDelegate
 
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
+@optional
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark; // SVPlacemark is an MKPlacemark subclass with a coordinate property
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks; // array of SVPlacemark objects
 - (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
 
 @end

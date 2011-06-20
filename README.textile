@@ -34,14 +34,38 @@ SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate
 
 h2. Adopting the SVGeocoderDelegate protocol
 
-On success, SVGeocoder will return an @SVPlacemark@ object (a  "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass with a @coordinate@ property):
+On success, SVGeocoder will return an @SVPlacemark@ object:
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
+</pre>
+
+Or an array of SVPlacemark objects (if you want multiple results or pick the most relevant placemark yourself):
+
+<pre>
+- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks;
 </pre>
 
 SVGeocoder will return an error if Google didn't return any placemark of if there is no connectivity:
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
+</pre>
+
+h2. About the SVPlacemark object
+
+SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass but with a @coordinate@ property. Here's what an SVPlacemark object looks like:
+
+<pre>
+	address =     {
+        Country = Canada;
+        CountryCode = CA;
+        State = Quebec;
+        Street = "3456 Rue Denis";
+        ZIP = "J0K 1S0";
+    };
+    coordinate =     {
+        latitude = "46.01529";
+        longitude = "-73.76997";
+    };
 </pre>

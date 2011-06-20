@@ -111,51 +111,63 @@
 	NSError *jsonError = NULL;
 	NSDictionary *responseDict = [responseData objectFromJSONData];
 	
-	if(responseDict == nil || [responseDict valueForKey:@"results"] == nil || [[responseDict valueForKey:@"results"] count] == 0) {
+    NSArray *resultsArray = [responseDict valueForKey:@"results"];    
+ 	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
+    
+	if(responseDict == nil || resultsArray == nil || [resultsArray count] == 0) {
 		[self connection:connection didFailWithError:jsonError];
 		return;
 	}
+    
+    for(NSDictionary *placemarkDict in resultsArray) {
 	
-	NSDictionary *addressDict = [[[responseDict valueForKey:@"results"] objectAtIndex:0] valueForKey:@"address_components"];
-	NSDictionary *coordinateDict = [[[[responseDict valueForKey:@"results"] objectAtIndex:0] valueForKey:@"geometry"] valueForKey:@"location"];
+        NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
+        NSDictionary *coordinateDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"location"];
+        
+        float lat = [[coordinateDict valueForKey:@"lat"] floatValue];
+        float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
+        
+        NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
+        
+        for(NSDictionary *component in addressDict) {
+            
+            NSArray *types = [component valueForKey:@"types"];
+            
+            if([types containsObject:@"street_number"])
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStreetKey];
+            
+            if([types containsObject:@"route"])
+                [formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
+            
+            if([types containsObject:@"locality"])
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
+            
+            if([types containsObject:@"administrative_area_level_1"])
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStateKey];
+            
+            if([types containsObject:@"postal_code"])
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressZIPKey];
+            
+            if([types containsObject:@"country"]) {
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCountryKey];
+                [formattedAddressDict setValue:[component valueForKey:@"short_name"] forKey:(NSString*)kABPersonAddressCountryCodeKey];
+            }
+        }
+        
+        SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
+        [formattedAddressDict release];
+        
+        [placemarksArray addObject:placemark];
+        [placemark release];
+    }
 	
-	float lat = [[coordinateDict valueForKey:@"lat"] floatValue];
-	float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
-	
-	NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
-	
-	for(NSDictionary *component in addressDict) {
-		
-		NSArray *types = [component valueForKey:@"types"];
-		
-		if([types containsObject:@"street_number"])
-			[formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStreetKey];
-		
-		if([types containsObject:@"route"])
-			[formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
-		
-		if([types containsObject:@"locality"])
-			[formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
-		
-		if([types containsObject:@"administrative_area_level_1"])
-			[formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStateKey];
-		
-		if([types containsObject:@"postal_code"])
-			[formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressZIPKey];
-		
-		if([types containsObject:@"country"]) {
-			[formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCountryKey];
-			[formattedAddressDict setValue:[component valueForKey:@"short_name"] forKey:(NSString*)kABPersonAddressCountryCodeKey];
-		}
-	}
-	
-	SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
-	[formattedAddressDict release];
-	
-	NSLog(@"SVGeocoder -> Found Placemark");
-	[self.delegate geocoder:self didFindPlacemark:placemark];
-	[placemark release];
+    if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemark:)])
+        [self.delegate geocoder:self didFindPlacemark:[placemarksArray objectAtIndex:0]];
+    
+    else if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemarks:)])
+        [self.delegate geocoder:self didFindPlacemarks:placemarksArray];
 }
+
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	
