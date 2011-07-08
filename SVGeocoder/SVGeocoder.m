@@ -6,14 +6,13 @@
 //
 
 #import "SVGeocoder.h" 
-#import "JSONKit.h"
 
 @interface SVGeocoder ()
 
-@property (nonatomic, retain) NSString *requestString;
-@property (nonatomic, assign) NSMutableData *responseData;
-@property (nonatomic, assign) NSURLConnection *rConnection;
-@property (nonatomic, retain) NSURLRequest *request;
+@property (nonatomic, strong) NSString *requestString;
+@property (nonatomic, strong) NSMutableData *responseData;
+@property (nonatomic, strong) NSURLConnection *rConnection;
+@property (nonatomic, strong) NSURLRequest *request;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 
@@ -30,11 +29,6 @@
 	
 	self.request = nil;
 	self.requestString = nil;
-	
-	[responseData release];
-	[rConnection release];
-	
-	[super dealloc];
 }
 
 #pragma mark -
@@ -111,7 +105,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
 	NSError *jsonError = NULL;
-	NSDictionary *responseDict = [responseData objectFromJSONData];
+	NSDictionary *responseDict = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:&jsonError];
 	
     NSArray *resultsArray = [responseDict valueForKey:@"results"];    
  	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
@@ -157,10 +151,8 @@
         }
         
         SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
-        [formattedAddressDict release];
         
         [placemarksArray addObject:placemark];
-        [placemark release];
     }
 	
     if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemark:)])
