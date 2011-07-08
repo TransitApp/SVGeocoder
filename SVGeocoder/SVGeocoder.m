@@ -15,6 +15,8 @@
 @property (nonatomic, assign) NSURLConnection *rConnection;
 @property (nonatomic, retain) NSURLRequest *request;
 
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+
 @end
 
 @implementation SVGeocoder
