@@ -12,6 +12,7 @@
 @implementation SVPlacemark
 
 @synthesize coordinate;
+@synthesize formattedAddress;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)aCoordinate addressDictionary:(NSDictionary *)addressDictionary {
 	

@@ -157,6 +157,8 @@
         SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
         [formattedAddressDict release];
         
+        placemark.formattedAddress = [placemarkDict objectForKey:@"formatted_address"];
+        
         [placemarksArray addObject:placemark];
         [placemark release];
     }
