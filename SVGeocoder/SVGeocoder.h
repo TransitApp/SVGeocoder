@@ -16,7 +16,7 @@
 
 @interface SVGeocoder : NSObject
 
-@property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
+@property (nonatomic, weak) id<SVGeocoderDelegate> delegate;
 
 // Reverse Geocoder
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
