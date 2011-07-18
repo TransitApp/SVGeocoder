@@ -4,6 +4,8 @@ SVGeocoder fills the lack of a forward geocoding class on iOS, and is an improve
 
 h2. Installation
 
+__Checkout the "iOS 5 branch":https://github.com/samvermette/SVGeocoder/tree/iOS5 for ARC and NSJSONSerializer use (thanks "aufflick":https://github.com/aufflick)__
+
 * Drag the @SVGeocoder/SVGeocoder@ folder into your project. 
 * Add the *CoreLocation*, *MapKit* and *AddressBook* frameworks to your project.
 
@@ -68,6 +70,7 @@ SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios
 	coordinate = {
 		latitude = "46.01529";
 		longitude = "-73.76997";
-	}
+	},
+	formattedAddress = "3456 Rue Saint-Denis, Montreal, QC H2L 4S9, Canada"
 }
 </pre>
