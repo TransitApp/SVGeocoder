@@ -14,6 +14,11 @@
 @synthesize coordinate;
 @synthesize formattedAddress;
 
+- (void)dealloc {
+    self.formattedAddress = nil;
+    [super dealloc];
+}
+
 - (id)initWithCoordinate:(CLLocationCoordinate2D)aCoordinate addressDictionary:(NSDictionary *)addressDictionary {
 	
 	if((self = [super initWithCoordinate:aCoordinate addressDictionary:addressDictionary]))
@@ -26,7 +31,7 @@
 	
 	NSDictionary *coordDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:self.coordinate.latitude], @"latitude", [NSNumber numberWithFloat:self.coordinate.longitude], @"longitude", nil]; 
 	
-	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:coordDict, @"coordinate", self.addressDictionary, @"address", nil];
+	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:coordDict, @"coordinate", self.addressDictionary, @"address", self.formattedAddress, @"formattedAddress", nil];
 	
 	return [dict description];
 }
