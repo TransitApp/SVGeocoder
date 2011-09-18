@@ -141,6 +141,8 @@
             
             if([types containsObject:@"locality"])
                 [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
+            else if([types containsObject:@"natural_feature"])
+                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
             
             if([types containsObject:@"administrative_area_level_1"])
                 [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStateKey];
