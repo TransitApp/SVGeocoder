@@ -6,7 +6,7 @@
 //
 
 #import "SVGeocoder.h" 
-//#import "JSONKit.h"
+#import "JSONKit.h"
 
 @interface SVGeocoder ()
 
