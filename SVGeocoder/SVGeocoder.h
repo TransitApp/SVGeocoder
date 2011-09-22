@@ -12,12 +12,18 @@
 
 #import "SVPlacemark.h"
 
+typedef enum _SVGCAddressFormat {
+    SVGCAddressFormatUS             = 0,
+    SVGCAddressFormatSpanish        = 1
+} SVGCAddressFormat;
+
+
 @protocol SVGeocoderDelegate;
 
 @interface SVGeocoder : NSObject
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
-
+@property (nonatomic, assign) SVGCAddressFormat addressFormat;
 // Reverse Geocoder
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
 
