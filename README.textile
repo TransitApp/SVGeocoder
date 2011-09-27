@@ -74,3 +74,7 @@ SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios
 	formattedAddress = "3456 Rue Saint-Denis, Montreal, QC H2L 4S9, Canada"
 }
 </pre>
+
+h2. Credits
+
+SVGeocoder is brought to you by "Sam Vermette":http://samvermette.com and "contributors to the project":https://github.com/samvermette/SVGeocoder/contributors. If you have feature suggestions or bug reports, feel free to help out by sending pull requests or by "creating new issues":https://github.com/samvermette/SVGeocoder/issues/new. If you're using SVGeocoder in your project, attribution would be nice.

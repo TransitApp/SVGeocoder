@@ -1,9 +1,11 @@
 //
-//  SVPlacemark.h
-//  SVGeocoder
+// SVPlacemark.h
+// SVGeocoder
 //
-//  Created by Sam Vermette on 01.05.11.
-//  Copyright 2011 Sam Vermette. All rights reserved.
+// Created by Sam Vermette on 01.05.11.
+// Copyright 2011 samvermette.com. All rights reserved.
+//
+// https://github.com/samvermette/SVGeocoder
 //
 
 #import <Foundation/Foundation.h>

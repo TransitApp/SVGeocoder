@@ -1,8 +1,10 @@
 //
-//  SVGeocoder.h
+// SVGeocoder.h
 //
-//  Created by Sam Vermette on 07.02.11.
-//  Copyright 2011 Sam Vermette. All rights reserved.
+// Created by Sam Vermette on 07.02.11.
+// Copyright 2011 samvermette.com. All rights reserved.
+//
+// https://github.com/samvermette/SVGeocoder
 //
 
 #import <Foundation/Foundation.h>
