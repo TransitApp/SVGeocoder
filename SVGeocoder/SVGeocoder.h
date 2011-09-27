@@ -29,6 +29,7 @@
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
 
 - (void)startAsynchronous;
+- (void)cancel;
 
 @end
 

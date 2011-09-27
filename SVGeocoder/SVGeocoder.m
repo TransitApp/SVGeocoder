@@ -27,16 +27,18 @@
 #pragma mark -
 
 - (void)dealloc {
-	
-	self.request = nil;
+	[self cancel];
+	[super dealloc];
+}
+
+- (void)cancel {
+    self.request = nil;
     self.delegate = nil;
 	self.requestString = nil;
 	
 	[responseData release];
     [rConnection cancel];
 	[rConnection release];
-	
-	[super dealloc];
 }
 
 #pragma mark -
