@@ -29,6 +29,8 @@
 	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
 	[alertView release];
+    
+    [geocoder release];
 }
 
 //- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks {
@@ -42,7 +44,8 @@
 	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
 	[alertView show];
 	[alertView release];
-	
+    
+    [geocoder release];
 }
 
 @end
