@@ -23,6 +23,8 @@
 
 @synthesize delegate, requestString, responseData, rConnection, request;
 
+@synthesize addressFormat = _addressFormat;
+
 
 #pragma mark -
 
@@ -48,12 +50,12 @@
 	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true", coordinate.latitude, coordinate.longitude];
 	
 	NSLog(@"SVGeocoder -> %@", self.requestString);
-
+    
 	return self;
 }
 
 - (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
-			
+    
 	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&bounds=%f,%f|%f,%f&sensor=true", 
 						  address,
 						  region.center.latitude-(region.span.latitudeDelta/2.0),
@@ -126,7 +128,7 @@
 	}
     
     for(NSDictionary *placemarkDict in resultsArray) {
-	
+        
         NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
         NSDictionary *coordinateDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"location"];
         
@@ -142,8 +144,21 @@
             if([types containsObject:@"street_number"])
                 [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStreetKey];
             
-            if([types containsObject:@"route"])
-                [formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
+            if([types containsObject:@"route"]) {
+                switch (self.addressFormat) {
+                    case SVGCAddressFormatUS:
+                        [formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
+                        break;
+                    case SVGCAddressFormatSpanish:
+                        [formattedAddressDict setValue:[[component valueForKey:@"long_name"] stringByAppendingFormat:@" %@",[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey]] forKey:(NSString*)kABPersonAddressStreetKey];
+                        break;
+                    default:
+                        [formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
+                        break;
+                        
+                }
+            }
+            
             
             if([types containsObject:@"locality"])
                 [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
