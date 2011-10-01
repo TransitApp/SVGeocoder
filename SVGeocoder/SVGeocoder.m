@@ -10,12 +10,20 @@
 #import "SVGeocoder.h" 
 #import "JSONKit.h"
 
+@interface NSString (URLEncoding)
+- (NSString*)encodedURLParameterString;
+@end
+
+
 @interface SVGeocoder ()
+
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters;
+- (void)addParametersToRequest:(NSMutableDictionary*)parameters;
 
 @property (nonatomic, retain) NSString *requestString;
 @property (nonatomic, assign) NSMutableData *responseData;
 @property (nonatomic, assign) NSURLConnection *rConnection;
-@property (nonatomic, retain) NSURLRequest *request;
+@property (nonatomic, retain) NSMutableURLRequest *request;
 
 @end
 
@@ -31,6 +39,78 @@
 	[super dealloc];
 }
 
+#pragma mark - Public Initializers
+
+- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+                                       [NSString stringWithFormat:@"%f,%f", coordinate.latitude, coordinate.longitude], @"latlng", nil];
+    
+    return [self initWithParameters:parameters];
+}
+
+
+- (SVGeocoder*)initWithAddress:(NSString*)address {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+                                       [address encodedURLParameterString], @"address", nil];
+    
+    return [self initWithParameters:parameters];
+}
+
+
+- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+                                       [address encodedURLParameterString], @"address", 
+                                       [NSString stringWithFormat:@"%f,%f|%f,%f", 
+                                            region.center.latitude-(region.span.latitudeDelta/2.0),
+                                            region.center.longitude-(region.span.longitudeDelta/2.0),
+                                            region.center.latitude+(region.span.latitudeDelta/2.0),
+                                            region.center.longitude+(region.span.longitudeDelta/2.0)], @"bounds", nil];
+    
+    return [self initWithParameters:parameters];
+}
+
+
+- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString {
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+                                       [address encodedURLParameterString], @"address", 
+                                       regionString, @"region", nil];
+    
+    return [self initWithParameters:parameters];
+}
+
+
+#pragma mark - Private Utility Methods
+
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters {
+    
+    self.request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
+    
+    [parameters setValue:@"true" forKey:@"sensor"];
+    [self addParametersToRequest:parameters];
+    
+    NSLog(@"SVGeocoder -> %@", request.URL.absoluteString);
+    
+    return self;
+}
+
+- (void)addParametersToRequest:(NSMutableDictionary*)parameters {
+    
+    NSMutableArray *paramStringsArray = [NSMutableArray arrayWithCapacity:[[parameters allKeys] count]];
+    
+    for(NSString *key in [parameters allKeys]) {
+        NSObject *paramValue = [parameters valueForKey:key];
+        [paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, paramValue]];
+    }
+    
+    NSString *paramsString = [paramStringsArray componentsJoinedByString:@"&"];
+    NSString *baseAddress = request.URL.absoluteString;
+    baseAddress = [baseAddress stringByAppendingFormat:@"?%@", paramsString];
+    [self.request setURL:[NSURL URLWithString:baseAddress]];
+}
+
+
+#pragma mark - Public Utility Methods
+
 - (void)cancel {
     self.request = nil;
     self.delegate = nil;
@@ -41,67 +121,12 @@
 	[rConnection release];
 }
 
-#pragma mark -
-
-- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate {
-	
-	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true", coordinate.latitude, coordinate.longitude];
-	
-	NSLog(@"SVGeocoder -> %@", self.requestString);
-
-	return self;
-}
-
-- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
-			
-	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&bounds=%f,%f|%f,%f&sensor=true", 
-						  address,
-						  region.center.latitude-(region.span.latitudeDelta/2.0),
-						  region.center.longitude-(region.span.longitudeDelta/2.0),
-						  region.center.latitude+(region.span.latitudeDelta/2.0),
-						  region.center.longitude+(region.span.longitudeDelta/2.0)];
-	
-	NSLog(@"SVGeocoder -> %@", self.requestString);
-	
-	return self;
-}
-
-- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString {
-	
-	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&region=%@&sensor=true", 
-						  address,
-						  regionString];
-	
-	NSLog(@"SVGeocoder -> %@", self.requestString);
-	
-	return self;
-}
-
-- (SVGeocoder*)initWithAddress:(NSString*)address {
-	
-	self.requestString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?address=%@&sensor=true", address];
-	
-	NSLog(@"SVGeocoder -> %@", self.requestString);
-	
-	return self;
-}
-
-#pragma mark -
-
-- (void)setDelegate:(id <SVGeocoderDelegate>)newDelegate {
-	
-	delegate = newDelegate;
-}
-
 
 - (void)startAsynchronous {
-	
-	NSString *escapedString = [self.requestString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	self.request = [NSURLRequest requestWithURL:[NSURL URLWithString:escapedString]];
-	
 	responseData = [[NSMutableData alloc] init];
 	rConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
+
 
 #pragma mark -
 #pragma mark NSURLConnectionDelegate
@@ -190,5 +215,21 @@
 	[self.delegate geocoder:self didFailWithError:error];
 }
 
+
+@end
+
+
+#pragma mark -
+
+@implementation NSString (URLEncoding)
+
+- (NSString*)encodedURLParameterString {
+    NSString *result = (NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                          (CFStringRef)self,
+                                                                          NULL,
+                                                                          CFSTR(":/=,!$&'()*+;[]@#?"),
+                                                                          kCFStringEncodingUTF8);
+	return [result autorelease];
+}
 
 @end
