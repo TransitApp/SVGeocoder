@@ -86,6 +86,7 @@
     self.request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
     
     [parameters setValue:@"true" forKey:@"sensor"];
+    [parameters setValue:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"language"];
     [self addParametersToRequest:parameters];
     
     NSLog(@"SVGeocoder -> %@", request.URL.absoluteString);
