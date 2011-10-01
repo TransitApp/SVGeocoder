@@ -5,6 +5,7 @@
 // Copyright 2011 samvermette.com. All rights reserved.
 //
 // https://github.com/samvermette/SVGeocoder
+// http://code.google.com/apis/maps/documentation/geocoding/
 //
 
 #import "SVGeocoder.h" 
