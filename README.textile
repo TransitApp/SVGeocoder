@@ -9,7 +9,9 @@ __Checkout the "iOS 5 branch":https://github.com/samvermette/SVGeocoder/tree/iOS
 * Drag the @SVGeocoder/SVGeocoder@ folder into your project. 
 * Add the *CoreLocation*, *MapKit* and *AddressBook* frameworks to your project.
 
-h2. Using the Geocoder:
+h2. Usage
+
+h3. Geocoding addresses
 
 <pre>
 NSString *addressString = @"3245 St-Denis, Montreal"
@@ -25,7 +27,7 @@ Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameter
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
 </pre>
 
-h2. Using the Reverse Geocoder:
+h3. Reverse geocoding coordinates:
 
 <pre>
 CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(45.54181, -73.62928);
@@ -34,7 +36,7 @@ SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate
 [rGeocoderRequest startAsynchronous];
 </pre>
 
-h2. Adopting the SVGeocoderDelegate protocol
+h3. Adopting the SVGeocoderDelegate protocol
 
 On success, SVGeocoder will return an @SVPlacemark@ object:
 
@@ -52,6 +54,21 @@ SVGeocoder will return an error if Google didn't return any placemark of if ther
 
 <pre>
 - (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
+</pre>
+
+h3. Cancelling requests
+
+Make sure you cancel requests for which the user isn't waiting on anymore:
+
+<pre>
+SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:@"3245 St-Denis, Montreal"];
+[geocodeRequest setDelegate:self];
+[geocodeRequest startAsynchronous];
+
+// user exits view, no longer needs geocoding results
+
+[geocodeRequest cancel];
+[geocodeRequest release];
 </pre>
 
 h2. About the SVPlacemark object
