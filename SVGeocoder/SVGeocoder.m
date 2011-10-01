@@ -134,16 +134,17 @@
         float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
         
         NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
+        NSMutableArray *streetAddressComponents = [NSMutableArray arrayWithCapacity:2];
         
         for(NSDictionary *component in addressDict) {
             
             NSArray *types = [component valueForKey:@"types"];
             
             if([types containsObject:@"street_number"])
-                [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStreetKey];
+                [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
             
             if([types containsObject:@"route"])
-                [formattedAddressDict setValue:[[formattedAddressDict valueForKey:(NSString*)kABPersonAddressStreetKey] stringByAppendingFormat:@" %@",[component valueForKey:@"long_name"]] forKey:(NSString*)kABPersonAddressStreetKey];
+                [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
             
             if([types containsObject:@"locality"])
                 [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
@@ -161,6 +162,9 @@
                 [formattedAddressDict setValue:[component valueForKey:@"short_name"] forKey:(NSString*)kABPersonAddressCountryCodeKey];
             }
         }
+        
+        if([streetAddressComponents count] > 0)
+            [formattedAddressDict setValue:[streetAddressComponents componentsJoinedByString:@" "] forKey:(NSString*)kABPersonAddressStreetKey];
         
         SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
         [formattedAddressDict release];
