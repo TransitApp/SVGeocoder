@@ -20,6 +20,7 @@
 
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters;
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 
 @property (nonatomic, retain) NSString *requestString;
 @property (nonatomic, assign) NSMutableData *responseData;
