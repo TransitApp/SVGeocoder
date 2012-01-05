@@ -159,7 +159,35 @@
 		[self connection:connection didFailWithError:jsonError];
 		return;
 	}
-    
+	
+	NSString *status = [responseDict valueForKey:@"status"];
+	
+	// deal with error statuses by raising didFailWithError
+	
+	if ([status isEqualToString:@"ZERO_RESULTS"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+	
+	if ([status isEqualToString:@"OVER_QUERY_LIMIT"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+
+	if ([status isEqualToString:@"REQUEST_DENIED"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}    
+	
+	if ([status isEqualToString:@"INVALID_REQUEST"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+	
     for(NSDictionary *placemarkDict in resultsArray) {
 	
         NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
