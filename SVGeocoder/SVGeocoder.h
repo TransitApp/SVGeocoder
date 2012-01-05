@@ -20,6 +20,7 @@
 @interface SVGeocoder : NSObject
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
+@property (readonly, getter = isQuerying) BOOL querying;
 
 // Reverse Geocoder
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;

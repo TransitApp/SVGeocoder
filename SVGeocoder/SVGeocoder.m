@@ -32,12 +32,14 @@
 @implementation SVGeocoder
 
 @synthesize delegate, requestString, responseData, rConnection, request;
-
+@synthesize querying = _querying;
 
 #pragma mark -
 
 - (void)dealloc {
-	[self cancel];
+    if (self.isQuerying)
+        [self cancel];
+	
 	[super dealloc];
 }
 
@@ -115,6 +117,8 @@
 #pragma mark - Public Utility Methods
 
 - (void)cancel {
+	_querying = NO;
+	
     self.request = nil;
     self.delegate = nil;
 	self.requestString = nil;
@@ -126,6 +130,7 @@
 
 
 - (void)startAsynchronous {
+	_querying = YES;
 	responseData = [[NSMutableData alloc] init];
 	rConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
@@ -141,6 +146,8 @@
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+	
+	_querying = NO;
 	
 	NSError *jsonError = NULL;
 	NSDictionary *responseDict = [responseData objectFromJSONData];
@@ -212,6 +219,8 @@
 
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+	
+	_querying = NO;
 	
 	NSLog(@"SVGeocoder -> Failed with error: %@, (%@)", [error localizedDescription], [[request URL] absoluteString]);
 	
