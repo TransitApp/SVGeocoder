@@ -32,12 +32,14 @@
 @implementation SVGeocoder
 
 @synthesize delegate, requestString, responseData, rConnection, request;
-
+@synthesize querying = _querying;
 
 #pragma mark -
 
 - (void)dealloc {
-	[self cancel];
+    if (self.isQuerying)
+        [self cancel];
+	
 	[super dealloc];
 }
 
@@ -115,6 +117,8 @@
 #pragma mark - Public Utility Methods
 
 - (void)cancel {
+	_querying = NO;
+	
     self.request = nil;
     self.delegate = nil;
 	self.requestString = nil;
@@ -126,6 +130,7 @@
 
 
 - (void)startAsynchronous {
+	_querying = YES;
 	responseData = [[NSMutableData alloc] init];
 	rConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
@@ -142,6 +147,8 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	
+	_querying = NO;
+	
 	NSError *jsonError = NULL;
 	NSDictionary *responseDict = [responseData objectFromJSONData];
 	
@@ -152,7 +159,35 @@
 		[self connection:connection didFailWithError:jsonError];
 		return;
 	}
-    
+	
+	NSString *status = [responseDict valueForKey:@"status"];
+	
+	// deal with error statuses by raising didFailWithError
+	
+	if ([status isEqualToString:@"ZERO_RESULTS"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+	
+	if ([status isEqualToString:@"OVER_QUERY_LIMIT"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+
+	if ([status isEqualToString:@"REQUEST_DENIED"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}    
+	
+	if ([status isEqualToString:@"INVALID_REQUEST"]) {
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:nil];
+		[self.delegate geocoder:self didFailWithError:error];
+		return;
+	}
+	
     for(NSDictionary *placemarkDict in resultsArray) {
 	
         NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
@@ -213,6 +248,8 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	
+	_querying = NO;
+	
 	NSLog(@"SVGeocoder -> Failed with error: %@, (%@)", [error localizedDescription], [[request URL] absoluteString]);
 	
 	[self.delegate geocoder:self didFailWithError:error];
@@ -230,7 +267,7 @@
     NSString *result = (NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                                           (CFStringRef)self,
                                                                           NULL,
-                                                                          CFSTR(":/=,!$&'()*+;[]@#?"),
+                                                                          CFSTR(":/=,!$&'()*+;[]@#?|"),
                                                                           kCFStringEncodingUTF8);
 	return [result autorelease];
 }

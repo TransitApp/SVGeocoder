@@ -15,11 +15,19 @@
 
 #import "SVPlacemark.h"
 
+typedef enum {
+	SVGeocoderZeroResultsError = 1,
+	SVGeocoderOverQueryLimitError,
+	SVGeocoderRequestDeniedError,
+	SVGeocoderInvalidRequestError
+} SVGecoderError;
+
 @protocol SVGeocoderDelegate;
 
 @interface SVGeocoder : NSObject
 
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
+@property (readonly, getter = isQuerying) BOOL querying;
 
 // Reverse Geocoder
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
