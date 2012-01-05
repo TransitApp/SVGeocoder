@@ -230,7 +230,7 @@
     NSString *result = (NSString*)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                                           (CFStringRef)self,
                                                                           NULL,
-                                                                          CFSTR(":/=,!$&'()*+;[]@#?"),
+                                                                          CFSTR(":/=,!$&'()*+;[]@#?|"),
                                                                           kCFStringEncodingUTF8);
 	return [result autorelease];
 }
