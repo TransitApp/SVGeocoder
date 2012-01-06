@@ -13,39 +13,37 @@
 
 
 - (void)reverseGeocode {
-	SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake([latField.text floatValue], [lngField.text floatValue])];
-	[geocodeRequest setDelegate:self];
-	[geocodeRequest startAsynchronous];
+    [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(latField.text.floatValue, lngField.text.floatValue)
+                    completion:^(id placemarks, NSError *error) {
+                        UIAlertView *alertView;
+                        
+                        if(!error && placemarks) {
+                            SVPlacemark *placemark = [placemarks objectAtIndex:0];
+                            alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                        } else {
+                            alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                        }
+                        
+                        [alertView show];
+                        [alertView release];
+                    }];
 }
 
 - (void)geocode {
-	SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:addressField.text];
-	[geocodeRequest setDelegate:self];
-	[geocodeRequest startAsynchronous];
-}
-
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark {
-	
-	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-	[alertView show];
-	[alertView release];
-    
-    [geocoder release];
-}
-
-//- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks {
-//    
-//    for(SVPlacemark *placemark in placemarks)
-//        NSLog(@"placemark = %@", [placemark description]);
-//}
-
-- (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error {
-	
-	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-	[alertView show];
-	[alertView release];
-    
-    [geocoder release];
+    [SVGeocoder geocode:addressField.text
+             completion:^(id placemarks, NSError *error) {
+                 UIAlertView *alertView;
+                 
+                 if(!error && placemarks) {
+                     SVPlacemark *placemark = [placemarks objectAtIndex:0];
+                     alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                 } else {
+                     alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                 }
+                 
+                 [alertView show];
+                 [alertView release];
+             }];
 }
 
 @end
