@@ -49,8 +49,9 @@
 + (SVGeocoder *)geocode:(NSString *)address completion:(void (^)(id, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", nil];
-    
-    return [[[self alloc] initWithParameters:parameters completion:block] autorelease];
+    SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
+    [geocoder startAsynchronous];
+    return [geocoder autorelease];
 }
 
 + (SVGeocoder *)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id, NSError *))block {
@@ -61,23 +62,26 @@
                                         bounds.center.longitude-(bounds.span.longitudeDelta/2.0),
                                         bounds.center.latitude+(bounds.span.latitudeDelta/2.0),
                                         bounds.center.longitude+(bounds.span.longitudeDelta/2.0)], @"bounds", nil];
-    
-    return [[[self alloc] initWithParameters:parameters completion:block] autorelease];
+    SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
+    [geocoder startAsynchronous];
+    return [geocoder autorelease];
 }
 
 + (SVGeocoder *)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
                                        region, @"region", nil];
-    
-    return [[[self alloc] initWithParameters:parameters completion:block] autorelease];
+    SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
+    [geocoder startAsynchronous];
+    return [geocoder autorelease];
 }
 
 + (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(id, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        [NSString stringWithFormat:@"%f,%f", coordinate.latitude, coordinate.longitude], @"latlng", nil];
-    
-    return [[[self alloc] initWithParameters:parameters completion:block] autorelease];
+    SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
+    [geocoder startAsynchronous];
+    return [geocoder autorelease];
 }
 
 #pragma mark - Public Initializers
@@ -191,20 +195,18 @@
 	
 	_querying = NO;
 	
-	NSError *jsonError = NULL;
 	NSDictionary *responseDict = [responseData objectFromJSONData];
-	
+	NSError *error = nil;
+    
     NSArray *resultsArray = [responseDict valueForKey:@"results"];    
  	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
     
 	if(responseDict == nil || resultsArray == nil) {
-		[self connection:connection didFailWithError:jsonError];
-		return;
+        NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"JSON couldn't be parsed", NSLocalizedDescriptionKey, nil];
+		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderJSONParsingError userInfo:userinfo];
 	}
 	
 	NSString *status = [responseDict valueForKey:@"status"];
-	NSError *error;
-    
 	// deal with error statuses by raising didFailWithError
 	
 	if ([status isEqualToString:@"ZERO_RESULTS"]) {

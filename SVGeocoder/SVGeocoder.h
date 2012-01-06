@@ -19,7 +19,8 @@ typedef enum {
 	SVGeocoderZeroResultsError = 1,
 	SVGeocoderOverQueryLimitError,
 	SVGeocoderRequestDeniedError,
-	SVGeocoderInvalidRequestError
+	SVGeocoderInvalidRequestError,
+    SVGeocoderJSONParsingError
 } SVGecoderError;
 
 @protocol SVGeocoderDelegate;
