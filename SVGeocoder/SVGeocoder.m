@@ -11,6 +11,8 @@
 #import "SVGeocoder.h" 
 #import "JSONKit.h"
 
+#define kSVGeocoderTimeoutInterval 20
+
 @interface NSString (URLEncoding)
 - (NSString*)encodedURLParameterString;
 @end
@@ -28,12 +30,13 @@
 @property (nonatomic, assign) NSMutableURLRequest *request;
 
 @property (nonatomic, copy) void (^completionBlock)(id placemarks, NSError *error);
+@property (nonatomic, retain) NSTimer *timeoutTimer; // see http://stackoverflow.com/questions/2736967
 
 @end
 
 @implementation SVGeocoder
 
-@synthesize delegate, requestString, responseData, connection, request, completionBlock;
+@synthesize delegate, requestString, responseData, connection, request, timeoutTimer, completionBlock;
 @synthesize querying = _querying;
 
 #pragma mark -
@@ -44,6 +47,7 @@
     [connection cancel];
     [connection release];
     
+    self.timeoutTimer = nil;
     self.completionBlock = nil;
 
 	[super dealloc];
@@ -135,12 +139,13 @@
     
     self.completionBlock = block;
     self.request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
-    
+    [self.request setTimeoutInterval:kSVGeocoderTimeoutInterval];
+
     [parameters setValue:@"true" forKey:@"sensor"];
     [parameters setValue:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"language"];
     [self addParametersToRequest:parameters];
     
-    NSLog(@"SVGeocoder -> %@", request.URL.absoluteString);
+    NSLog(@"[GET] %@", request.URL.absoluteString);
     
     return self;
 }
@@ -164,6 +169,14 @@
     [self.request setURL:[NSURL URLWithString:baseAddress]];
 }
 
+- (void)setTimeoutTimer:(NSTimer *)newTimer {
+    
+    if(timeoutTimer)
+        [timeoutTimer invalidate], [timeoutTimer release], timeoutTimer = nil;
+    
+    if(newTimer)
+        timeoutTimer = [newTimer retain];
+}
 
 #pragma mark - Public Utility Methods
 
@@ -180,11 +193,17 @@
 	_querying = YES;
 	responseData = [[NSMutableData alloc] init];
 	self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+    self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kSVGeocoderTimeoutInterval target:self selector:@selector(requestTimeout) userInfo:nil repeats:NO];
 }
 
 
 #pragma mark -
 #pragma mark NSURLConnectionDelegate
+
+- (void)requestTimeout {
+    NSError *timeoutError = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
+    [self connection:nil didFailWithError:timeoutError];
+}
 
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
@@ -303,7 +322,7 @@
 	
 	_querying = NO;
 	
-	NSLog(@"SVGeocoder -> Failed with error: %@, (%@)", [error localizedDescription], [[request URL] absoluteString]);
+    self.timeoutTimer = nil;
 	
     if(self.completionBlock)
         self.completionBlock(nil, error);
