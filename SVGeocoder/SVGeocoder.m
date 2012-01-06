@@ -24,23 +24,28 @@
 
 @property (nonatomic, retain) NSString *requestString;
 @property (nonatomic, assign) NSMutableData *responseData;
-@property (nonatomic, assign) NSURLConnection *rConnection;
-@property (nonatomic, retain) NSMutableURLRequest *request;
+@property (nonatomic, assign) NSURLConnection *connection;
+@property (nonatomic, assign) NSMutableURLRequest *request;
+
 @property (nonatomic, copy) void (^completionBlock)(id placemarks, NSError *error);
 
 @end
 
 @implementation SVGeocoder
 
-@synthesize delegate, requestString, responseData, rConnection, request, completionBlock;
+@synthesize delegate, requestString, responseData, connection, request, completionBlock;
 @synthesize querying = _querying;
 
 #pragma mark -
 
 - (void)dealloc {
-    if (self.isQuerying)
-        [self cancel];
-	
+    [responseData release];
+    [request release];
+    [connection cancel];
+    [connection release];
+    
+    self.completionBlock = nil;
+
 	[super dealloc];
 }
 
@@ -129,7 +134,7 @@
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(id, NSError *))block {
     
     self.completionBlock = block;
-    self.request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
+    self.request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
     
     [parameters setValue:@"true" forKey:@"sensor"];
     [parameters setValue:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"language"];
@@ -165,28 +170,24 @@
 - (void)cancel {
 	_querying = NO;
 	
-    self.request = nil;
-    self.delegate = nil;
-	self.requestString = nil;
-	
-	[responseData release];
-    [rConnection cancel];
-	[rConnection release];
+    [self.connection cancel];
+    [self.connection release];
+    connection = nil;
 }
 
 
 - (void)startAsynchronous {
 	_querying = YES;
 	responseData = [[NSMutableData alloc] init];
-	rConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
+	self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 }
 
 
 #pragma mark -
 #pragma mark NSURLConnectionDelegate
 
+
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	
 	[responseData appendData:data];
 }
 
