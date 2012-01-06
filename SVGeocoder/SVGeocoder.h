@@ -26,6 +26,16 @@ typedef enum {
 
 @interface SVGeocoder : NSObject
 
++ (SVGeocoder*)geocode:(NSString *)address completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id placemarks, NSError *error))block;
+
++ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(id placemarks, NSError *error))block;
+
+- (void)cancel;
+
+// old API; these methods will soon get deprecated
+
 @property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
 @property (readonly, getter = isQuerying) BOOL querying;
 
@@ -38,7 +48,6 @@ typedef enum {
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
 
 - (void)startAsynchronous;
-- (void)cancel;
 
 @end
 
