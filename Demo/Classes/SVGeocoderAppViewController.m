@@ -14,7 +14,7 @@
 
 - (void)reverseGeocode {
     [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(latField.text.floatValue, lngField.text.floatValue)
-                    completion:^(id placemarks, NSError *error) {
+                    completion:^(NSArray *placemarks, NSError *error) {
                         UIAlertView *alertView;
                         
                         if(!error && placemarks) {
@@ -31,7 +31,7 @@
 
 - (void)geocode {
     [SVGeocoder geocode:addressField.text
-             completion:^(id placemarks, NSError *error) {
+             completion:^(NSArray *placemarks, NSError *error) {
                  UIAlertView *alertView;
                  
                  if(!error && placemarks) {

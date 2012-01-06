@@ -42,7 +42,7 @@ typedef NSUInteger SVGeocoderRequestState;
 @property (nonatomic, readwrite) SVGeocoderRequestState state;
 
 @property (nonatomic, retain) NSTimer *timeoutTimer; // see http://stackoverflow.com/questions/2736967
-@property (nonatomic, copy) void (^completionBlock)(id placemarks, NSError *error);
+@property (nonatomic, copy) void (^completionBlock)(NSArray *placemarks, NSError *error);
 
 @end
 
@@ -67,7 +67,7 @@ typedef NSUInteger SVGeocoderRequestState;
 
 #pragma mark - Convenience Initializers
 
-+ (SVGeocoder *)geocode:(NSString *)address completion:(void (^)(id, NSError *))block {
++ (SVGeocoder *)geocode:(NSString *)address completion:(void (^)(NSArray *, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
@@ -75,7 +75,7 @@ typedef NSUInteger SVGeocoderRequestState;
     return [geocoder autorelease];
 }
 
-+ (SVGeocoder *)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id, NSError *))block {
++ (SVGeocoder *)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(NSArray *, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
                                        [NSString stringWithFormat:@"%f,%f|%f,%f", 
@@ -88,7 +88,7 @@ typedef NSUInteger SVGeocoderRequestState;
     return [geocoder autorelease];
 }
 
-+ (SVGeocoder *)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id, NSError *))block {
++ (SVGeocoder *)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(NSArray *, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
                                        region, @"region", nil];
@@ -97,7 +97,7 @@ typedef NSUInteger SVGeocoderRequestState;
     return [geocoder autorelease];
 }
 
-+ (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(id, NSError *))block {
++ (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(NSArray *, NSError *))block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        [NSString stringWithFormat:@"%f,%f", coordinate.latitude, coordinate.longitude], @"latlng", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];

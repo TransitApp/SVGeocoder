@@ -27,11 +27,11 @@ typedef enum {
 
 @interface SVGeocoder : NSOperation
 
-+ (SVGeocoder*)geocode:(NSString *)address completion:(void (^)(id placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(NSArray *placemarks, NSError *error))block;
 
-+ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(NSArray *placemarks, NSError *error))block;
 
 - (void)cancel;
 

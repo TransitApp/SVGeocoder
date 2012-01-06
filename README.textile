@@ -15,23 +15,25 @@ In it's simplest form, geocoding an address is as simple as:
 
 <pre>
 [SVGeocoder geocode:addressString
-         completion:^(id placemarks, NSError *error) {
+         completion:^(NSArray *placemarks, NSError *error) {
              // do something with placemarks, handle errors
          }];
 </pre>
 
+Where @placemarks@ is an array of @SVPlacemark@ objects (see more about that below). 
+
 Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameters to fine-tune your search:
 
 <pre>
-+ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(NSArray *placemarks, NSError *error))block;
 </pre>
 
 h3. Using the Reverse Geocoding API
 
 <pre>
 [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(45.53264, -73.60518)
-                completion:^(id placemarks, NSError *error) {
+                completion:^(NSArray *placemarks, NSError *error) {
                     // do something with placemarks, handle errors
                 }];
 </pre>
