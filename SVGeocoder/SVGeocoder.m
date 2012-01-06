@@ -13,6 +13,15 @@
 
 #define kSVGeocoderTimeoutInterval 20
 
+enum {
+    SVGeocoderRequestStateReady = 0,
+    SVGeocoderRequestStateExecuting,
+    SVGeocoderRequestStateFinished
+};
+
+typedef NSUInteger SVGeocoderRequestState;
+
+
 @interface NSString (URLEncoding)
 - (NSString*)encodedURLParameterString;
 @end
@@ -22,21 +31,24 @@
 
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(id, NSError*))block;
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
+- (void)finish;
+
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 
 @property (nonatomic, retain) NSString *requestString;
 @property (nonatomic, assign) NSMutableData *responseData;
 @property (nonatomic, assign) NSURLConnection *connection;
 @property (nonatomic, assign) NSMutableURLRequest *request;
+@property (nonatomic, readwrite) SVGeocoderRequestState state;
 
-@property (nonatomic, copy) void (^completionBlock)(id placemarks, NSError *error);
 @property (nonatomic, retain) NSTimer *timeoutTimer; // see http://stackoverflow.com/questions/2736967
+@property (nonatomic, copy) void (^completionBlock)(id placemarks, NSError *error);
 
 @end
 
 @implementation SVGeocoder
 
-@synthesize delegate, requestString, responseData, connection, request, timeoutTimer, completionBlock;
+@synthesize delegate, requestString, responseData, connection, request, state, timeoutTimer, completionBlock;
 @synthesize querying = _querying;
 
 #pragma mark -
@@ -59,7 +71,7 @@
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
-    [geocoder startAsynchronous];
+    [geocoder start];
     return [geocoder autorelease];
 }
 
@@ -72,7 +84,7 @@
                                         bounds.center.latitude+(bounds.span.latitudeDelta/2.0),
                                         bounds.center.longitude+(bounds.span.longitudeDelta/2.0)], @"bounds", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
-    [geocoder startAsynchronous];
+    [geocoder start];
     return [geocoder autorelease];
 }
 
@@ -81,7 +93,7 @@
                                        address, @"address", 
                                        region, @"region", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
-    [geocoder startAsynchronous];
+    [geocoder start];
     return [geocoder autorelease];
 }
 
@@ -89,7 +101,7 @@
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        [NSString stringWithFormat:@"%f,%f", coordinate.latitude, coordinate.longitude], @"latlng", nil];
     SVGeocoder *geocoder = [[self alloc] initWithParameters:parameters completion:block];
-    [geocoder startAsynchronous];
+    [geocoder start];
     return [geocoder autorelease];
 }
 
@@ -136,7 +148,7 @@
 #pragma mark - Private Utility Methods
 
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(id, NSError *))block {
-    
+    self = [super init];
     self.completionBlock = block;
     self.request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
     [self.request setTimeoutInterval:kSVGeocoderTimeoutInterval];
@@ -146,6 +158,8 @@
     [self addParametersToRequest:parameters];
     
     NSLog(@"[GET] %@", request.URL.absoluteString);
+    
+    self.state = SVGeocoderRequestStateReady;
     
     return self;
 }
@@ -178,22 +192,68 @@
         timeoutTimer = [newTimer retain];
 }
 
-#pragma mark - Public Utility Methods
+#pragma mark - NSOperation methods
 
-- (void)cancel {
-	_querying = NO;
-	
-    [self.connection cancel];
-    [self.connection release];
-    connection = nil;
+- (void)start {
+    
+    if(self.isCancelled) {
+        [self finish];
+        return;
+    }
+    
+    if(![NSThread isMainThread]) { // NSOperationQueue calls start from a bg thread (through GCD), but NSURLConnection already does that by itself
+        [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
+        return;
+    }
+        
+    [self willChangeValueForKey:@"isExecuting"];
+    self.state = SVGeocoderRequestStateExecuting;    
+    [self didChangeValueForKey:@"isExecuting"];
+    
+    self.responseData = [[NSMutableData alloc] init];
+    self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kSVGeocoderTimeoutInterval target:self selector:@selector(requestTimeout) userInfo:nil repeats:NO];
+    
+    self.connection = [[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:YES];
+    NSLog(@"[%@] %@", self.request.HTTPMethod, self.request.URL.absoluteString);
 }
 
+// private method; not part of NSOperation
+- (void)finish {
+    [connection cancel];
+    [connection release];
+    connection = nil;
+    
+    [self willChangeValueForKey:@"isExecuting"];
+//    [self willChangeValueForKey:@"isFinished"]; // no idea why but this makes it crash
+    self.state = SVGeocoderRequestStateFinished;    
+    [self didChangeValueForKey:@"isExecuting"];
+//    [self didChangeValueForKey:@"isFinished"]; // no idea why but this makes it crash
+    
+    self.timeoutTimer = nil;
+}
+
+- (void)cancel {
+    if([self isFinished])
+        return;
+    
+    [super cancel];
+    [self finish];
+}
+
+- (BOOL)isConcurrent {
+    return YES;
+}
+
+- (BOOL)isFinished {
+    return self.state == SVGeocoderRequestStateFinished;
+}
+
+- (BOOL)isExecuting {
+    return self.state == SVGeocoderRequestStateExecuting;
+}
 
 - (void)startAsynchronous {
-	_querying = YES;
-	responseData = [[NSMutableData alloc] init];
-	self.connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kSVGeocoderTimeoutInterval target:self selector:@selector(requestTimeout) userInfo:nil repeats:NO];
+	[self start];
 }
 
 
@@ -207,97 +267,99 @@
 
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-	[responseData appendData:data];
+	[self.responseData appendData:data];
 }
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-	
 	_querying = NO;
-	
-	NSDictionary *responseDict = [responseData objectFromJSONData];
-	NSError *error = nil;
+	id response = nil;
+    NSError *error = nil;
     
-    NSArray *resultsArray = [responseDict valueForKey:@"results"];    
- 	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
-    
-	if(responseDict == nil || resultsArray == nil) {
-        NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"JSON couldn't be parsed", NSLocalizedDescriptionKey, nil];
-		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderJSONParsingError userInfo:userinfo];
-	}
-	
-	NSString *status = [responseDict valueForKey:@"status"];
-	// deal with error statuses by raising didFailWithError
-	
-	if ([status isEqualToString:@"ZERO_RESULTS"]) {
-		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Zero results returned", NSLocalizedDescriptionKey, nil];
-		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:userinfo];
-	}
-	
-	else if ([status isEqualToString:@"OVER_QUERY_LIMIT"]) {
-		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Currently rate limited. Too many queries in a short time. (Over Quota)", NSLocalizedDescriptionKey, nil];
-		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:userinfo];
-	}
-
-	else if ([status isEqualToString:@"REQUEST_DENIED"]) {
-		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Request was denied. Did you remember to add the \"sensor\" parameter?", NSLocalizedDescriptionKey, nil];
-		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:userinfo];
-	}    
-	
-	else if ([status isEqualToString:@"INVALID_REQUEST"]) {
-		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"The request was invalid. Was the \"address\" or \"latlng\" missing?", NSLocalizedDescriptionKey, nil];
-		error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:userinfo];
-	}
-    
-    else {
-        for(NSDictionary *placemarkDict in resultsArray) {
+    if(self.responseData && self.responseData.length > 0) {
+        response = [NSData dataWithData:self.responseData];
+        NSDictionary *responseDict = [response objectFromJSONDataWithParseOptions:JKSerializeOptionNone error:&error];
         
-            NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
-            NSDictionary *coordinateDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"location"];
+        if(!error) {
+            NSArray *resultsArray = [responseDict valueForKey:@"results"];
+            NSString *status = [responseDict valueForKey:@"status"];
+            // deal with error statuses by raising didFailWithError
             
-            float lat = [[coordinateDict valueForKey:@"lat"] floatValue];
-            float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
-            
-            NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
-            NSMutableArray *streetAddressComponents = [NSMutableArray arrayWithCapacity:2];
-            
-            for(NSDictionary *component in addressDict) {
-                
-                NSArray *types = [component valueForKey:@"types"];
-                
-                if([types containsObject:@"street_number"])
-                    [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
-                
-                if([types containsObject:@"route"])
-                    [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
-                
-                if([types containsObject:@"locality"])
-                    [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
-                else if([types containsObject:@"natural_feature"])
-                    [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
-                
-                if([types containsObject:@"administrative_area_level_1"])
-                    [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStateKey];
-                
-                if([types containsObject:@"postal_code"])
-                    [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressZIPKey];
-                
-                if([types containsObject:@"country"]) {
-                    [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCountryKey];
-                    [formattedAddressDict setValue:[component valueForKey:@"short_name"] forKey:(NSString*)kABPersonAddressCountryCodeKey];
-                }
+            if ([status isEqualToString:@"ZERO_RESULTS"]) {
+                NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Zero results returned", NSLocalizedDescriptionKey, nil];
+                error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:userinfo];
             }
             
-            if([streetAddressComponents count] > 0)
-                [formattedAddressDict setValue:[streetAddressComponents componentsJoinedByString:@" "] forKey:(NSString*)kABPersonAddressStreetKey];
+            else if ([status isEqualToString:@"OVER_QUERY_LIMIT"]) {
+                NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Currently rate limited. Too many queries in a short time. (Over Quota)", NSLocalizedDescriptionKey, nil];
+                error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:userinfo];
+            }
+
+            else if ([status isEqualToString:@"REQUEST_DENIED"]) {
+                NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Request was denied. Did you remember to add the \"sensor\" parameter?", NSLocalizedDescriptionKey, nil];
+                error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:userinfo];
+            }    
             
-            SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
-            [formattedAddressDict release];
+            else if ([status isEqualToString:@"INVALID_REQUEST"]) {
+                NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"The request was invalid. Was the \"address\" or \"latlng\" missing?", NSLocalizedDescriptionKey, nil];
+                error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:userinfo];
+            }
             
-            placemark.formattedAddress = [placemarkDict objectForKey:@"formatted_address"];
-            
-            [placemarksArray addObject:placemark];
-            [placemark release];
+            else {
+                NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
+                
+                for(NSDictionary *placemarkDict in resultsArray) {
+                
+                    NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
+                    NSDictionary *coordinateDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"location"];
+                    
+                    float lat = [[coordinateDict valueForKey:@"lat"] floatValue];
+                    float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
+                    
+                    NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
+                    NSMutableArray *streetAddressComponents = [NSMutableArray arrayWithCapacity:2];
+                    
+                    for(NSDictionary *component in addressDict) {
+                        
+                        NSArray *types = [component valueForKey:@"types"];
+                        
+                        if([types containsObject:@"street_number"])
+                            [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
+                        
+                        if([types containsObject:@"route"])
+                            [streetAddressComponents addObject:[component valueForKey:@"long_name"]];
+                        
+                        if([types containsObject:@"locality"])
+                            [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
+                        else if([types containsObject:@"natural_feature"])
+                            [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCityKey];
+                        
+                        if([types containsObject:@"administrative_area_level_1"])
+                            [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressStateKey];
+                        
+                        if([types containsObject:@"postal_code"])
+                            [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressZIPKey];
+                        
+                        if([types containsObject:@"country"]) {
+                            [formattedAddressDict setValue:[component valueForKey:@"long_name"] forKey:(NSString*)kABPersonAddressCountryKey];
+                            [formattedAddressDict setValue:[component valueForKey:@"short_name"] forKey:(NSString*)kABPersonAddressCountryCodeKey];
+                        }
+                    }
+                    
+                    if([streetAddressComponents count] > 0)
+                        [formattedAddressDict setValue:[streetAddressComponents componentsJoinedByString:@" "] forKey:(NSString*)kABPersonAddressStreetKey];
+                    
+                    SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
+                    [formattedAddressDict release];
+                    
+                    placemark.formattedAddress = [placemarkDict objectForKey:@"formatted_address"];
+                    
+                    [placemarksArray addObject:placemark];
+                    [placemark release];
+                }
+                
+                response = placemarksArray;
+            }
         }
     }
     
@@ -305,29 +367,32 @@
         if(error)
             self.completionBlock(nil, error);
         else
-            self.completionBlock(placemarksArray, error);
+            self.completionBlock(response, error);
     } 
     
     else {
+        if(error && [(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFailWithError:)])
+            [self.delegate geocoder:self didFailWithError:error];
         if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemark:)])
-            [self.delegate geocoder:self didFindPlacemark:[placemarksArray objectAtIndex:0]];
+            [self.delegate geocoder:self didFindPlacemark:[response objectAtIndex:0]];
         
         else if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemarks:)])
-            [self.delegate geocoder:self didFindPlacemarks:placemarksArray];
+            [self.delegate geocoder:self didFindPlacemarks:response];
     }
+    
+    [self finish];
 }
 
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	
-	_querying = NO;
-	
-    self.timeoutTimer = nil;
+    _querying = NO;
 	
     if(self.completionBlock)
         self.completionBlock(nil, error);
     else
         [self.delegate geocoder:self didFailWithError:error];
+    
+    [self finish];
 }
 
 

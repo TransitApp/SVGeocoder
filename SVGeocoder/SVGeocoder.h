@@ -25,7 +25,7 @@ typedef enum {
 
 @protocol SVGeocoderDelegate;
 
-@interface SVGeocoder : NSObject
+@interface SVGeocoder : NSOperation
 
 + (SVGeocoder*)geocode:(NSString *)address completion:(void (^)(id placemarks, NSError *error))block;
 + (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id placemarks, NSError *error))block;
