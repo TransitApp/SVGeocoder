@@ -1,75 +1,44 @@
 h1. SVGeocoder
 
-SVGeocoder fills the lack of a forward geocoding class on iOS, and is an improved alternative to Apple's unreliable @MKReverseGeocoder@. It uses "JSONKit":https://github.com/johnezang/JSONKit as well as the "Google Geocoding API":http://code.google.com/apis/maps/documentation/geocoding/ as its data provider so make sure you read their "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
+SVGeocoder is a simple Cocoa wrapper for the "Google Geocoding Service":http://code.google.com/apis/maps/documentation/geocoding/. It allows you to quickly geocode and reverse-geocode addresses and coordinates. It is block-based, uses NSURLConnection internally as well as "JSONKit":https://github.com/johnezang/JSONKit (included in package). Make sure you read the Google Geocoding Service "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
 
 h2. Installation
-
-__Checkout the "iOS 5 branch":https://github.com/samvermette/SVGeocoder/tree/iOS5 for ARC and NSJSONSerializer use (thanks "aufflick":https://github.com/aufflick)__
 
 * Drag the @SVGeocoder/SVGeocoder@ folder into your project. 
 * Add the *CoreLocation*, *MapKit* and *AddressBook* frameworks to your project.
 
 h2. Usage
 
-h3. Geocoding addresses
+h3. Using the Geocoding API
+
+In it's simplest form, geocoding an address is as simple as:
 
 <pre>
-NSString *addressString = @"3245 St-Denis, Montreal"
-SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:addressString];
-[geocodeRequest setDelegate:self];
-[geocodeRequest startAsynchronous];
+[SVGeocoder geocode:addressString
+         completion:^(id placemarks, NSError *error) {
+             // do something with placemarks, handle errors
+         }];
 </pre>
 
 Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameters to fine-tune your search:
 
 <pre>
-- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)bounds;
-- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(id placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(id placemarks, NSError *error))block;
 </pre>
 
-h3. Reverse geocoding coordinates:
+h3. Using the Reverse Geocoding API
 
 <pre>
-CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(45.54181, -73.62928);
-SVGeocoder *rGeocoderRequest = [[SVGeocoder alloc] initWithCoordinate:coordinate];
-[rGeocoderRequest setDelegate:self];
-[rGeocoderRequest startAsynchronous];
-</pre>
-
-h3. Adopting the SVGeocoderDelegate protocol
-
-On success, SVGeocoder will return an @SVPlacemark@ object:
-
-<pre>
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark;
-</pre>
-
-Or an array of @SVPlacemark@ objects (if you want multiple results or pick the most relevant placemark yourself):
-
-<pre>
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks;
-</pre>
-
-SVGeocoder will return an error if Google didn't return any placemark of if there is no connectivity:
-
-<pre>
-- (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
+[SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(45.53264, -73.60518)
+                completion:^(id placemarks, NSError *error) {
+                    // do something with placemarks, handle errors
+                }];
 </pre>
 
 h3. Cancelling requests
 
-Make sure you cancel requests for which the user isn't waiting on anymore:
-
-<pre>
-SVGeocoder *geocodeRequest = [[SVGeocoder alloc] initWithAddress:@"3245 St-Denis, Montreal"];
-[geocodeRequest setDelegate:self];
-[geocodeRequest startAsynchronous];
-
-// user exits view, no longer needs geocoding results
-
-[geocodeRequest cancel];
-[geocodeRequest release];
-</pre>
+Make sure you cancel requests for which the user isn't waiting on anymore by keeping a pointer to your SVGeocoder object and calling @cancel@ on it. In all cases, the request will time out after 20s.
 
 h2. About the SVPlacemark object
 
