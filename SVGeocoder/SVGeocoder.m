@@ -55,7 +55,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString*)address {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", nil];
+                                       address, @"address", nil];
     
     return [self initWithParameters:parameters];
 }
@@ -63,7 +63,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", 
+                                       address, @"address", 
                                        [NSString stringWithFormat:@"%f,%f|%f,%f", 
                                             region.center.latitude-(region.span.latitudeDelta/2.0),
                                             region.center.longitude-(region.span.longitudeDelta/2.0),
@@ -76,7 +76,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", 
+                                       address, @"address", 
                                        regionString, @"region", nil];
     
     return [self initWithParameters:parameters];
@@ -104,7 +104,11 @@
     
     for(NSString *key in [parameters allKeys]) {
         NSObject *paramValue = [parameters valueForKey:key];
-        [paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, paramValue]];
+		if ([paramValue isKindOfClass:[NSString class]]) {
+			[paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, [(NSString *)paramValue encodedURLParameterString]]];			
+		} else {
+			[paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, paramValue]];
+		}
     }
     
     NSString *paramsString = [paramStringsArray componentsJoinedByString:@"&"];
@@ -155,7 +159,7 @@
     NSArray *resultsArray = [responseDict valueForKey:@"results"];    
  	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
     
-	if(responseDict == nil || resultsArray == nil || [resultsArray count] == 0) {
+	if(responseDict == nil || resultsArray == nil) {
 		[self connection:connection didFailWithError:jsonError];
 		return;
 	}
@@ -165,25 +169,33 @@
 	// deal with error statuses by raising didFailWithError
 	
 	if ([status isEqualToString:@"ZERO_RESULTS"]) {
-		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:nil];
+		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Zero results returned", NSLocalizedDescriptionKey, nil];
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderZeroResultsError userInfo:userinfo];
+		
 		[self.delegate geocoder:self didFailWithError:error];
 		return;
 	}
 	
 	if ([status isEqualToString:@"OVER_QUERY_LIMIT"]) {
-		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:nil];
+		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Currently rate limited. Too many queries in a short time. (Over Quota)", NSLocalizedDescriptionKey, nil];
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderOverQueryLimitError userInfo:userinfo];
+
 		[self.delegate geocoder:self didFailWithError:error];
 		return;
 	}
 
 	if ([status isEqualToString:@"REQUEST_DENIED"]) {
-		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:nil];
+		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Request was denied. Did you remember to add the \"sensor\" parameter?", NSLocalizedDescriptionKey, nil];
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderRequestDeniedError userInfo:userinfo];
+
 		[self.delegate geocoder:self didFailWithError:error];
 		return;
 	}    
 	
 	if ([status isEqualToString:@"INVALID_REQUEST"]) {
-		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:nil];
+		NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"The request was invalid. Was the \"address\" or \"latlng\" missing?", NSLocalizedDescriptionKey, nil];
+		NSError *error = [NSError errorWithDomain:@"SVGeocoderErrorDomain" code:SVGeocoderInvalidRequestError userInfo:userinfo];
+
 		[self.delegate geocoder:self didFailWithError:error];
 		return;
 	}
