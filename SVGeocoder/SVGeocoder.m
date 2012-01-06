@@ -55,7 +55,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString*)address {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", nil];
+                                       address, @"address", nil];
     
     return [self initWithParameters:parameters];
 }
@@ -63,7 +63,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)region {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", 
+                                       address, @"address", 
                                        [NSString stringWithFormat:@"%f,%f|%f,%f", 
                                             region.center.latitude-(region.span.latitudeDelta/2.0),
                                             region.center.longitude-(region.span.longitudeDelta/2.0),
@@ -76,7 +76,7 @@
 
 - (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       [address encodedURLParameterString], @"address", 
+                                       address, @"address", 
                                        regionString, @"region", nil];
     
     return [self initWithParameters:parameters];
@@ -104,7 +104,11 @@
     
     for(NSString *key in [parameters allKeys]) {
         NSObject *paramValue = [parameters valueForKey:key];
-        [paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, paramValue]];
+		if ([paramValue isKindOfClass:[NSString class]]) {
+			[paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, [(NSString *)paramValue encodedURLParameterString]]];			
+		} else {
+			[paramStringsArray addObject:[NSString stringWithFormat:@"%@=%@", key, paramValue]];
+		}
     }
     
     NSString *paramsString = [paramStringsArray componentsJoinedByString:@"&"];
@@ -155,7 +159,7 @@
     NSArray *resultsArray = [responseDict valueForKey:@"results"];    
  	NSMutableArray *placemarksArray = [NSMutableArray arrayWithCapacity:[resultsArray count]];
     
-	if(responseDict == nil || resultsArray == nil || [resultsArray count] == 0) {
+	if(responseDict == nil || resultsArray == nil) {
 		[self connection:connection didFailWithError:jsonError];
 		return;
 	}
