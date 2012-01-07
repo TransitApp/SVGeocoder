@@ -156,9 +156,7 @@ typedef NSUInteger SVGeocoderRequestState;
     [parameters setValue:@"true" forKey:@"sensor"];
     [parameters setValue:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"language"];
     [self addParametersToRequest:parameters];
-    
-    NSLog(@"[GET] %@", request.URL.absoluteString);
-    
+        
     self.state = SVGeocoderRequestStateReady;
     
     return self;
