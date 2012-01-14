@@ -29,7 +29,7 @@ typedef NSUInteger SVGeocoderRequestState;
 
 @interface SVGeocoder ()
 
-- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(id, NSError*))block;
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(NSArray *, NSError*))block;
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
 - (void)finish;
 
@@ -147,7 +147,7 @@ typedef NSUInteger SVGeocoderRequestState;
 
 #pragma mark - Private Utility Methods
 
-- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(id, NSError *))block {
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(NSArray *, NSError *))block {
     self = [super init];
     self.completionBlock = block;
     self.request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
