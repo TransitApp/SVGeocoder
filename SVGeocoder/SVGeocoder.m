@@ -371,10 +371,9 @@ typedef NSUInteger SVGeocoderRequestState;
     else {
         if(error && [(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFailWithError:)])
             [self.delegate geocoder:self didFailWithError:error];
-        if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemark:)])
+        else if(!error && [(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemark:)])
             [self.delegate geocoder:self didFindPlacemark:[response objectAtIndex:0]];
-        
-        else if([(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemarks:)])
+        else if(!error && [(NSObject*)self.delegate respondsToSelector:@selector(geocoder:didFindPlacemarks:)])
             [self.delegate geocoder:self didFindPlacemarks:response];
     }
     
