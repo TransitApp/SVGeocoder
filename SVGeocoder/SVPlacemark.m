@@ -14,6 +14,7 @@
 @implementation SVPlacemark
 
 @synthesize coordinate;
+@synthesize region = _region;
 @synthesize formattedAddress;
 
 - (void)dealloc {
@@ -27,6 +28,21 @@
 		self.coordinate = aCoordinate;
 	
 	return self;
+}
+
+- (id)initWithRegion:(CLRegion *)region addressDictionary:(NSDictionary *)addressDictionary {
+    
+    if ((self = [super initWithCoordinate:region.center addressDictionary:addressDictionary])) {
+        self.coordinate = region.center;
+        self.region = region;
+    }
+    
+    return self;
+}
+
+- (CLRegion *)region
+{
+    return _region;
 }
 
 - (NSString*)description {

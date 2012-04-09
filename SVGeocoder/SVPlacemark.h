@@ -16,6 +16,9 @@
 }
 
 @property (nonatomic, readwrite) CLLocationCoordinate2D coordinate;
+@property (nonatomic, copy) CLRegion *region;
 @property (nonatomic, retain) NSString * formattedAddress;
+
+- (id)initWithRegion:(CLRegion *)region addressDictionary:(NSDictionary *)addressDictionary;
 
 @end
