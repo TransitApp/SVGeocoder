@@ -310,9 +310,22 @@ typedef NSUInteger SVGeocoderRequestState;
                 
                     NSDictionary *addressDict = [placemarkDict valueForKey:@"address_components"];
                     NSDictionary *coordinateDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"location"];
+                    NSDictionary *boundsDict = [[placemarkDict valueForKey:@"geometry"] valueForKey:@"bounds"];
                     
-                    float lat = [[coordinateDict valueForKey:@"lat"] floatValue];
-                    float lng = [[coordinateDict valueForKey:@"lng"] floatValue];
+                    CLLocationDegrees lat = [[coordinateDict valueForKey:@"lat"] floatValue];
+                    CLLocationDegrees lng = [[coordinateDict valueForKey:@"lng"] floatValue];
+                    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(lat, lng);
+                    
+                    NSDictionary *northEastDict = [boundsDict objectForKey:@"northeast"];
+                    NSDictionary *southWestDict = [boundsDict objectForKey:@"southwest"];
+                    CLLocationDegrees northEastLatitude = [[northEastDict objectForKey:@"lat"] floatValue];
+                    CLLocationDegrees southWestLatitude = [[southWestDict objectForKey:@"lat"] floatValue];
+                    CLLocationDegrees latitudeDelta = fabs(northEastLatitude - southWestLatitude);
+                    CLLocationDegrees northEastLongitude = [[northEastDict objectForKey:@"lng"] floatValue];
+                    CLLocationDegrees southWestLongitude = [[southWestDict objectForKey:@"lng"] floatValue];
+                    CLLocationDegrees longitudeDelta = fabs(northEastLongitude - southWestLongitude);
+                    MKCoordinateSpan span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta);
+                    MKCoordinateRegion region = MKCoordinateRegionMake(coordinate, span);
                     
                     NSMutableDictionary *formattedAddressDict = [[NSMutableDictionary alloc] init];
                     NSMutableArray *streetAddressComponents = [NSMutableArray arrayWithCapacity:2];
@@ -347,7 +360,7 @@ typedef NSUInteger SVGeocoderRequestState;
                     if([streetAddressComponents count] > 0)
                         [formattedAddressDict setValue:[streetAddressComponents componentsJoinedByString:@" "] forKey:(NSString*)kABPersonAddressStreetKey];
                     
-                    SVPlacemark *placemark = [[SVPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake(lat, lng) addressDictionary:formattedAddressDict];
+                    SVPlacemark *placemark = [[SVPlacemark alloc] initWithRegion:region addressDictionary:formattedAddressDict];
                     [formattedAddressDict release];
                     
                     placemark.formattedAddress = [placemarkDict objectForKey:@"formatted_address"];
