@@ -30,7 +30,7 @@
 	return self;
 }
 
-- (id)initWithRegion:(CLRegion *)region addressDictionary:(NSDictionary *)addressDictionary {
+- (id)initWithRegion:(MKCoordinateRegion)region addressDictionary:(NSDictionary *)addressDictionary {
     
     if ((self = [super initWithCoordinate:region.center addressDictionary:addressDictionary])) {
         self.coordinate = region.center;
@@ -38,11 +38,6 @@
     }
     
     return self;
-}
-
-- (CLRegion *)region
-{
-    return _region;
 }
 
 - (NSString*)description {
