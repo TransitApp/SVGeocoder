@@ -36,9 +36,9 @@ typedef NSUInteger SVGeocoderRequestState;
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 
 @property (nonatomic, retain) NSString *requestString;
-@property (nonatomic, assign) NSMutableData *responseData;
-@property (nonatomic, assign) NSURLConnection *connection;
-@property (nonatomic, assign) NSMutableURLRequest *request;
+@property (nonatomic, retain) NSMutableData *responseData;
+@property (nonatomic, retain) NSURLConnection *connection;
+@property (nonatomic, retain) NSMutableURLRequest *request;
 @property (nonatomic, readwrite) SVGeocoderRequestState state;
 
 @property (nonatomic, retain) NSTimer *timeoutTimer; // see http://stackoverflow.com/questions/2736967
@@ -150,7 +150,7 @@ typedef NSUInteger SVGeocoderRequestState;
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(void (^)(NSArray *, NSError *))block {
     self = [super init];
     self.completionBlock = block;
-    self.request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
+    self.request = [[[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]] autorelease];
     [self.request setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
@@ -208,10 +208,10 @@ typedef NSUInteger SVGeocoderRequestState;
     self.state = SVGeocoderRequestStateExecuting;    
     [self didChangeValueForKey:@"isExecuting"];
     
-    self.responseData = [[NSMutableData alloc] init];
+    self.responseData = [[[NSMutableData alloc] init] autorelease];
     self.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kSVGeocoderTimeoutInterval target:self selector:@selector(requestTimeout) userInfo:nil repeats:NO];
     
-    self.connection = [[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:YES];
+    self.connection = [[[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:YES] autorelease];
     NSLog(@"[%@] %@", self.request.HTTPMethod, self.request.URL.absoluteString);
 }
 
