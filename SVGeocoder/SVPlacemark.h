@@ -11,14 +11,21 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-@interface SVPlacemark : MKPlacemark {
+@interface SVPlacemark : NSObject
 
-}
+@property (nonatomic, strong) NSString *formattedAddress;
+@property (nonatomic, strong) NSString *subThoroughfare;
+@property (nonatomic, strong) NSString *thoroughfare;
+@property (nonatomic, strong) NSString *subLocality;
+@property (nonatomic, strong) NSString *locality;
+@property (nonatomic, strong) NSString *subAdministrativeArea;
+@property (nonatomic, strong) NSString *administrativeArea;
+@property (nonatomic, strong) NSString *postalCode;
+@property (nonatomic, strong) NSString *country;
+@property (nonatomic, strong) NSString *ISOcountryCode;
 
 @property (nonatomic, readwrite) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readwrite) MKCoordinateRegion region;
-@property (nonatomic, retain) NSString * formattedAddress;
-
-- (id)initWithRegion:(MKCoordinateRegion)region addressDictionary:(NSDictionary *)addressDictionary;
+@property (nonatomic, strong) CLLocation *location;
 
 @end

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SVGeocoder.h"
 
-@interface SVGeocoderAppViewController : UIViewController <SVGeocoderDelegate> {
+@interface SVGeocoderAppViewController : UIViewController {
 	IBOutlet UITextField *latField, *lngField, *addressField;
 }
 

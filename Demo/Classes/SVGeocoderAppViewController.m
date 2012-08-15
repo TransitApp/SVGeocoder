@@ -13,36 +13,17 @@
 
 
 - (void)reverseGeocode {
+    
     [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(latField.text.floatValue, lngField.text.floatValue)
-                    completion:^(NSArray *placemarks, NSError *error) {
-                        UIAlertView *alertView;
-                        
-                        if(!error && placemarks) {
-                            SVPlacemark *placemark = [placemarks objectAtIndex:0];
-                            alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                        } else {
-                            alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                        }
-                        
-                        [alertView show];
-                        [alertView release];
+                    completion:^(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error) {
+                        NSLog(@"placemarks = %@", placemarks);
                     }];
 }
 
 - (void)geocode {
     [SVGeocoder geocode:addressField.text
-             completion:^(NSArray *placemarks, NSError *error) {
-                 UIAlertView *alertView;
-                 
-                 if(!error && placemarks) {
-                     SVPlacemark *placemark = [placemarks objectAtIndex:0];
-                     alertView = [[UIAlertView alloc] initWithTitle:@"Placemark Found!" message:[placemark description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                 } else {
-                     alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[error description] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-                 }
-                 
-                 [alertView show];
-                 [alertView release];
+             completion:^(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error) {
+                 NSLog(@"placemarks = %@", placemarks);
              }];
 }
 

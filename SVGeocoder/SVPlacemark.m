@@ -13,39 +13,23 @@
 
 @implementation SVPlacemark
 
-@synthesize coordinate;
-@synthesize region = _region;
-@synthesize formattedAddress;
+@synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, postalCode, country, ISOcountryCode, coordinate, location, region;
 
-- (void)dealloc {
-    self.formattedAddress = nil;
-    [super dealloc];
-}
-
-- (id)initWithCoordinate:(CLLocationCoordinate2D)aCoordinate addressDictionary:(NSDictionary *)addressDictionary {
-	
-	if((self = [super initWithCoordinate:aCoordinate addressDictionary:addressDictionary]))
-		self.coordinate = aCoordinate;
-	
-	return self;
-}
-
-- (id)initWithRegion:(MKCoordinateRegion)region addressDictionary:(NSDictionary *)addressDictionary {
+- (NSString*)description {	
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          formattedAddress, @"formattedAddress",
+                          subThoroughfare?subThoroughfare:[NSNull null], @"subThoroughfare",
+                          thoroughfare?thoroughfare:[NSNull null], @"thoroughfare",
+                          subLocality?subLocality:[NSNull null], @"subLocality",
+                          locality?locality:[NSNull null], @"locality",
+                          subAdministrativeArea?subAdministrativeArea:[NSNull null], @"subAdministrativeArea",
+                          administrativeArea?administrativeArea:[NSNull null], @"administrativeArea",
+                          postalCode?postalCode:[NSNull null], @"postalCode",
+                          country?country:[NSNull null], @"country",
+                          ISOcountryCode?ISOcountryCode:[NSNull null], @"ISOcountryCode",
+                          [NSString stringWithFormat:@"%f, %f", self.coordinate.latitude, self.coordinate.longitude], @"coordinate",
+                          nil];
     
-    if ((self = [super initWithCoordinate:region.center addressDictionary:addressDictionary])) {
-        self.coordinate = region.center;
-        self.region = region;
-    }
-    
-    return self;
-}
-
-- (NSString*)description {
-	
-	NSDictionary *coordDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:self.coordinate.latitude], @"latitude", [NSNumber numberWithFloat:self.coordinate.longitude], @"longitude", nil]; 
-	
-	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:coordDict, @"coordinate", self.addressDictionary, @"address", self.formattedAddress, @"formattedAddress", nil];
-	
 	return [dict description];
 }
 

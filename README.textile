@@ -1,11 +1,13 @@
+__*Important note if your project doesn't use ARC*: you must add the @-fobjc-arc@ compiler flag to @SVGeocoder.m@ and @SVPlacemark.m@ in Target Settings > Build Phases > Compile Sources.__
+
 h1. SVGeocoder
 
-SVGeocoder is a simple Cocoa wrapper for the "Google Geocoding Service":http://code.google.com/apis/maps/documentation/geocoding/. It allows you to quickly geocode and reverse-geocode addresses and coordinates. It is block-based, uses NSURLConnection internally as well as "JSONKit":https://github.com/johnezang/JSONKit (included in package). Make sure you read the Google Geocoding Service "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
+SVGeocoder is a simple Cocoa wrapper for the "Google Geocoding Service":http://code.google.com/apis/maps/documentation/geocoding/. It allows you to quickly geocode and reverse-geocode addresses and coordinates. It is blocked-based, uses @NSURLConnection@, ARC, as well as @NSJSONSerialization@ to automatically parse JSON responses (making it only compatible with iOS 5+). Make sure you read the Google Geocoding Service "Terms of Service":http://code.google.com/apis/maps/terms.html#section_10_12 before using SVGeocoder. 
 
 h2. Installation
 
 * Drag the @SVGeocoder/SVGeocoder@ folder into your project. 
-* Add the *CoreLocation*, *MapKit* and *AddressBook* frameworks to your project.
+* Add the *CoreLocation*, *MapKit* and frameworks to your project.
 
 h2. Usage
 
@@ -14,8 +16,8 @@ h3. Using the Geocoding API
 In it's simplest form, geocoding an address is as simple as:
 
 <pre>
-[SVGeocoder geocode:addressString
-         completion:^(NSArray *placemarks, NSError *error) {
+[SVGeocoder geocode:addressField.text
+         completion:^(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error) {
              // do something with placemarks, handle errors
          }];
 </pre>
@@ -25,43 +27,41 @@ Where @placemarks@ is an array of @SVPlacemark@ objects (see more about that bel
 Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameters to fine-tune your search:
 
 <pre>
-+ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(NSArray *placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)regionString completion:(SVGeocoderCompletionHandler)block;
 </pre>
 
 h3. Using the Reverse Geocoding API
 
 <pre>
 [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(45.53264, -73.60518)
-                completion:^(NSArray *placemarks, NSError *error) {
+                completion:^(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error) {
                     // do something with placemarks, handle errors
                 }];
 </pre>
 
-h3. Cancelling requests
-
-Make sure you cancel requests for which the user isn't waiting on anymore by keeping a pointer to your SVGeocoder object and calling @cancel@ on it. In all cases, the request will time out after 20s.
-
 h2. About the SVPlacemark object
 
-SVPlacemark is basically an "MKPlacemark":http://developer.apple.com/library/ios/#documentation/MapKit/Reference/MKPlacemark_Class/Reference/Reference.html subclass but with a @coordinate@ property. Here's what an SVPlacemark object looks like:
+SVPlacemark is now a simple NSObject. Here's a sample placemark returned for string "3456 Saint-Denis, Montreal":
 
 <pre>
 {
-	address = {
-		Country = Canada;
-		CountryCode = CA;
-		State = Quebec;
-		Street = "3456 Rue Denis";
-		ZIP = "J0K 1S0";
-	},
-	coordinate = {
-		latitude = "46.01529";
-		longitude = "-73.76997";
-	},
-	formattedAddress = "3456 Rue Saint-Denis, Montreal, QC H2L 4S9, Canada"
+    ISOcountryCode = CA;
+    administrativeArea = Quebec;
+    coordinate = "45.517363, -73.568376";
+    country = Canada;
+    formattedAddress = "3456 Rue Saint-Denis, Montreal, QC H2X 3L1, Canada";
+    locality = Montreal;
+    postalCode = "H2X 3L1";
+    subAdministrativeArea = "Communaut\U00e9-Urbaine-de-Montr\U00e9al";
+    subLocality = "Le Plateau-Mont-Royal";
+    subThoroughfare = 3456;
+    thoroughfare = "Rue Saint-Denis";
 }
 </pre>
+
+There's also a @region@ (@MKCoordinateRegion@) property in case the returned placemark isn't a pinned location, and a @location@ (@CLLocation@) convenience property. 
+
 
 h2. Credits
 

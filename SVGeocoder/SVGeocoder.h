@@ -9,7 +9,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AddressBook/AddressBook.h>
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MapKit.h>
 
@@ -23,41 +22,24 @@ typedef enum {
     SVGeocoderJSONParsingError
 } SVGecoderError;
 
-@protocol SVGeocoderDelegate;
+
+typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error);
 
 @interface SVGeocoder : NSOperation
 
-+ (SVGeocoder*)geocode:(NSString *)address completion:(void (^)(NSArray *placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(void (^)(NSArray *placemarks, NSError *error))block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)region completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)geocode:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)regionString completion:(SVGeocoderCompletionHandler)block;
 
-+ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(void (^)(NSArray *placemarks, NSError *error))block;
++ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
+- (SVGeocoder*)initWithAddress:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(NSString *)regionString completion:(SVGeocoderCompletionHandler)block;
+
+- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
+
+- (void)start;
 - (void)cancel;
-
-// old API; these methods will soon get deprecated
-
-@property (nonatomic, assign) id<SVGeocoderDelegate> delegate;
-@property (readonly, getter = isQuerying) BOOL querying;
-
-// Reverse Geocoder
-- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
-
-// (forward) Geocoder
-- (SVGeocoder*)initWithAddress:(NSString *)address;
-- (SVGeocoder*)initWithAddress:(NSString *)address inBounds:(MKCoordinateRegion)bounds;
-- (SVGeocoder*)initWithAddress:(NSString *)address inRegion:(NSString *)regionString;
-
-- (void)startAsynchronous;
-
-@end
-
-
-@protocol SVGeocoderDelegate
-
-@optional
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemark:(SVPlacemark *)placemark; // SVPlacemark is an MKPlacemark subclass with a coordinate property
-- (void)geocoder:(SVGeocoder *)geocoder didFindPlacemarks:(NSArray *)placemarks; // array of SVPlacemark objects
-- (void)geocoder:(SVGeocoder *)geocoder didFailWithError:(NSError *)error;
 
 @end
