@@ -316,8 +316,10 @@ typedef NSUInteger SVGeocoderState;
                         if([types containsObject:@"administrative_area_level_2"])
                             placemark.subAdministrativeArea = [component objectForKey:@"long_name"];
                         
-                        if([types containsObject:@"administrative_area_level_1"])
+                        if([types containsObject:@"administrative_area_level_1"]) {
                             placemark.administrativeArea = [component objectForKey:@"long_name"];
+                            placemark.administrativeAreaCode = [component objectForKey:@"short_name"];
+                        }
                         
                         if([types containsObject:@"country"]) {
                             placemark.country = [component objectForKey:@"long_name"];

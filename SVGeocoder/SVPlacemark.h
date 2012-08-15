@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSString *locality;
 @property (nonatomic, strong) NSString *subAdministrativeArea;
 @property (nonatomic, strong) NSString *administrativeArea;
+@property (nonatomic, strong) NSString *administrativeAreaCode;
 @property (nonatomic, strong) NSString *postalCode;
 @property (nonatomic, strong) NSString *country;
 @property (nonatomic, strong) NSString *ISOcountryCode;
