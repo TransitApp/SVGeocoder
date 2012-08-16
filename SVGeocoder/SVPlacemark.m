@@ -13,7 +13,7 @@
 
 @implementation SVPlacemark
 
-@synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, postalCode, country, ISOcountryCode, coordinate, location, region;
+@synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, administrativeAreaCode, postalCode, country, ISOcountryCode, coordinate, location, region;
 
 - (NSString*)description {	
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
