@@ -13,7 +13,6 @@
 
 
 - (void)reverseGeocode {
-    
     [SVGeocoder reverseGeocode:CLLocationCoordinate2DMake(latField.text.floatValue, lngField.text.floatValue)
                     completion:^(NSArray *placemarks, NSHTTPURLResponse *urlResponse, NSError *error) {
                         NSLog(@"placemarks = %@", placemarks);

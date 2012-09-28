@@ -24,11 +24,11 @@ In it's simplest form, geocoding an address is as simple as:
 
 Where @placemarks@ is an array of @SVPlacemark@ objects (see more about that below). 
 
-Additionally, you can use Google Geocoding API's @region@ and @bounds@ parameters to fine-tune your search:
+Additionally, you can use Google Geocoding API's @region@ parameter to fine-tune your search:
 
 <pre>
 + (SVGeocoder*)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(SVGeocoderCompletionHandler)block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(NSString *)regionString completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
 </pre>
 
 h3. Using the Reverse Geocoding API

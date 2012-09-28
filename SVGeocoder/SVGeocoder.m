@@ -9,6 +9,7 @@
 //
 
 #import "SVGeocoder.h" 
+#import <MapKit/MapKit.h>
 
 #define kSVGeocoderTimeoutInterval 20
 
@@ -72,13 +73,7 @@ typedef NSUInteger SVGeocoderState;
     return geocoder;
 }
 
-+ (SVGeocoder *)geocode:(NSString *)address bounds:(MKCoordinateRegion)bounds completion:(SVGeocoderCompletionHandler)block {
-    SVGeocoder *geocoder = [[self alloc] initWithAddress:address bounds:bounds completion:block];
-    [geocoder start];
-    return geocoder;
-}
-
-+ (SVGeocoder *)geocode:(NSString *)address region:(NSString *)region completion:(SVGeocoderCompletionHandler)block {
++ (SVGeocoder *)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithAddress:address region:region completion:block];
     [geocoder start];
     return geocoder;
@@ -108,23 +103,15 @@ typedef NSUInteger SVGeocoderState;
 }
 
 
-- (SVGeocoder*)initWithAddress:(NSString *)address bounds:(MKCoordinateRegion)region completion:(SVGeocoderCompletionHandler)block {
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
+    MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
                                        [NSString stringWithFormat:@"%f,%f|%f,%f", 
-                                            region.center.latitude-(region.span.latitudeDelta/2.0),
-                                            region.center.longitude-(region.span.longitudeDelta/2.0),
-                                            region.center.latitude+(region.span.latitudeDelta/2.0),
-                                            region.center.longitude+(region.span.longitudeDelta/2.0)], @"bounds", nil];
-    
-    return [self initWithParameters:parameters completion:block];
-}
-
-
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(NSString *)regionString completion:(SVGeocoderCompletionHandler)block {
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-                                       address, @"address", 
-                                       regionString, @"region", nil];
+                                            coordinateRegion.center.latitude-(coordinateRegion.span.latitudeDelta/2.0),
+                                            coordinateRegion.center.longitude-(coordinateRegion.span.longitudeDelta/2.0),
+                                            coordinateRegion.center.latitude+(coordinateRegion.span.latitudeDelta/2.0),
+                                            coordinateRegion.center.longitude+(coordinateRegion.span.longitudeDelta/2.0)], @"bounds", nil];
     
     return [self initWithParameters:parameters completion:block];
 }
