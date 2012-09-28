@@ -280,63 +280,7 @@ typedef NSUInteger SVGeocoderState;
             
             if(results.count > 0) {
                 [results enumerateObjectsUsingBlock:^(NSDictionary *result, NSUInteger idx, BOOL *stop) {
-                    SVPlacemark *placemark = [[SVPlacemark alloc] init];
-                    placemark.formattedAddress = [result objectForKey:@"formatted_address"];
-                    
-                    NSArray *addressComponents = [result objectForKey:@"address_components"];
-                    
-                    [addressComponents enumerateObjectsUsingBlock:^(NSDictionary *component, NSUInteger idx, BOOL *stop) {
-                        NSArray *types = [component objectForKey:@"types"];
-                        
-                        if([types containsObject:@"street_number"])
-                            placemark.subThoroughfare = [component objectForKey:@"long_name"];
-                        
-                        if([types containsObject:@"route"])
-                            placemark.thoroughfare = [component objectForKey:@"long_name"];
-                        
-                        if([types containsObject:@"administrative_area_level_3"] || [types containsObject:@"sublocality"] || [types containsObject:@"neighborhood"])
-                            placemark.subLocality = [component objectForKey:@"long_name"];
-                        
-                        if([types containsObject:@"locality"])
-                            placemark.locality = [component objectForKey:@"long_name"];
-                        
-                        if([types containsObject:@"administrative_area_level_2"])
-                            placemark.subAdministrativeArea = [component objectForKey:@"long_name"];
-                        
-                        if([types containsObject:@"administrative_area_level_1"]) {
-                            placemark.administrativeArea = [component objectForKey:@"long_name"];
-                            placemark.administrativeAreaCode = [component objectForKey:@"short_name"];
-                        }
-                        
-                        if([types containsObject:@"country"]) {
-                            placemark.country = [component objectForKey:@"long_name"];
-                            placemark.ISOcountryCode = [component objectForKey:@"short_name"];
-                        }
-                        
-                        if([types containsObject:@"postal_code"])
-                            placemark.postalCode = [component objectForKey:@"long_name"];
-                        
-                    }];
-                    
-                    NSDictionary *locationDict = [[result objectForKey:@"geometry"] objectForKey:@"location"];
-                    NSDictionary *boundsDict = [[result objectForKey:@"geometry"] objectForKey:@"bounds"];
-                    
-                    CLLocationDegrees lat = [[locationDict objectForKey:@"lat"] doubleValue];
-                    CLLocationDegrees lng = [[locationDict objectForKey:@"lng"] doubleValue];
-                    placemark.coordinate = CLLocationCoordinate2DMake(lat, lng);
-                    placemark.location = [[CLLocation alloc] initWithLatitude:lat longitude:lng];
-                    
-                    NSDictionary *northEastDict = [boundsDict objectForKey:@"northeast"];
-                    NSDictionary *southWestDict = [boundsDict objectForKey:@"southwest"];
-                    CLLocationDegrees northEastLatitude = [[northEastDict objectForKey:@"lat"] doubleValue];
-                    CLLocationDegrees southWestLatitude = [[southWestDict objectForKey:@"lat"] doubleValue];
-                    CLLocationDegrees latitudeDelta = fabs(northEastLatitude - southWestLatitude);
-                    CLLocationDegrees northEastLongitude = [[northEastDict objectForKey:@"lng"] doubleValue];
-                    CLLocationDegrees southWestLongitude = [[southWestDict objectForKey:@"lng"] doubleValue];
-                    CLLocationDegrees longitudeDelta = fabs(northEastLongitude - southWestLongitude);
-                    MKCoordinateSpan span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta);
-                    placemark.region = MKCoordinateRegionMake(placemark.location.coordinate, span);
-                    
+                    SVPlacemark *placemark = [[SVPlacemark alloc] initWithDictionary:result];
                     [placemarks addObject:placemark];
                 }];
             }
