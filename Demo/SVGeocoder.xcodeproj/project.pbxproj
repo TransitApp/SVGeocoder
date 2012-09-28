@@ -16,6 +16,7 @@
 		227829E313061C8C00CCA1B9 /* SVGeocoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 227829CB13061C8C00CCA1B9 /* SVGeocoder.m */; };
 		22B7DFEB1305BA250014DB40 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B7DFEA1305BA250014DB40 /* MapKit.framework */; };
 		22B7DFFD1305BA380014DB40 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B7DFFC1305BA380014DB40 /* CoreLocation.framework */; };
+		22E18A6F1615490F00F13D32 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 22E18A6E1615490F00F13D32 /* Default-568h@2x.png */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		2899E5220DE3E06400AC0155 /* SVGeocoderAppViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2899E5210DE3E06400AC0155 /* SVGeocoderAppViewController.xib */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
@@ -35,6 +36,7 @@
 		227829CB13061C8C00CCA1B9 /* SVGeocoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGeocoder.m; sourceTree = "<group>"; };
 		22B7DFEA1305BA250014DB40 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		22B7DFFC1305BA380014DB40 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		22E18A6E1615490F00F13D32 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2899E5210DE3E06400AC0155 /* SVGeocoderAppViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SVGeocoderAppViewController.xib; sourceTree = "<group>"; };
 		28AD733E0D9D9553002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				22E18A6E1615490F00F13D32 /* Default-568h@2x.png */,
 				2273178B14B7511A00A25F46 /* README.textile */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				227829C913061C8C00CCA1B9 /* SVGeocoder */,
@@ -163,7 +166,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SVGeocoder" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -192,6 +195,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* SVGeocoderAppViewController.xib in Resources */,
 				2273178C14B7511A00A25F46 /* README.textile in Resources */,
+				22E18A6F1615490F00F13D32 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
