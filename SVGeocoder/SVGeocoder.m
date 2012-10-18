@@ -264,13 +264,12 @@ typedef NSUInteger SVGeocoderState;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    id response = [NSData dataWithData:self.operationData];
     NSMutableArray *placemarks = nil;
     NSError *error = nil;
     
     if ([[operationURLResponse MIMEType] isEqualToString:@"application/json"]) {
         if(self.operationData && self.operationData.length > 0) {
-            response = [NSData dataWithData:self.operationData];
+            id response = [NSData dataWithData:self.operationData];
             NSDictionary *jsonObject = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingAllowFragments error:&error];
             NSArray *results = [jsonObject objectForKey:@"results"];
             NSString *status = [jsonObject valueForKey:@"status"];

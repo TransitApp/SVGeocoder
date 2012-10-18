@@ -36,61 +36,64 @@
 @synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, administrativeAreaCode, postalCode, country, ISOcountryCode, coordinate, location, region;
 
 - (id)initWithDictionary:(NSDictionary *)result {
-    self.formattedAddress = [result objectForKey:@"formatted_address"];
     
-    NSArray *addressComponents = [result objectForKey:@"address_components"];
-    
-    [addressComponents enumerateObjectsUsingBlock:^(NSDictionary *component, NSUInteger idx, BOOL *stopAddress) {
-        NSArray *types = [component objectForKey:@"types"];
+    if(self = [super init]) {
+        self.formattedAddress = [result objectForKey:@"formatted_address"];
         
-        if([types containsObject:@"street_number"])
-            self.subThoroughfare = [component objectForKey:@"long_name"];
+        NSArray *addressComponents = [result objectForKey:@"address_components"];
         
-        if([types containsObject:@"route"])
-            self.thoroughfare = [component objectForKey:@"long_name"];
+        [addressComponents enumerateObjectsUsingBlock:^(NSDictionary *component, NSUInteger idx, BOOL *stopAddress) {
+            NSArray *types = [component objectForKey:@"types"];
+            
+            if([types containsObject:@"street_number"])
+                self.subThoroughfare = [component objectForKey:@"long_name"];
+            
+            if([types containsObject:@"route"])
+                self.thoroughfare = [component objectForKey:@"long_name"];
+            
+            if([types containsObject:@"administrative_area_level_3"] || [types containsObject:@"sublocality"] || [types containsObject:@"neighborhood"])
+                self.subLocality = [component objectForKey:@"long_name"];
+            
+            if([types containsObject:@"locality"])
+                self.locality = [component objectForKey:@"long_name"];
+            
+            if([types containsObject:@"administrative_area_level_2"])
+                self.subAdministrativeArea = [component objectForKey:@"long_name"];
+            
+            if([types containsObject:@"administrative_area_level_1"]) {
+                self.administrativeArea = [component objectForKey:@"long_name"];
+                self.administrativeAreaCode = [component objectForKey:@"short_name"];
+            }
+            
+            if([types containsObject:@"country"]) {
+                self.country = [component objectForKey:@"long_name"];
+                self.ISOcountryCode = [component objectForKey:@"short_name"];
+            }
+            
+            if([types containsObject:@"postal_code"])
+                self.postalCode = [component objectForKey:@"long_name"];
+            
+        }];
         
-        if([types containsObject:@"administrative_area_level_3"] || [types containsObject:@"sublocality"] || [types containsObject:@"neighborhood"])
-            self.subLocality = [component objectForKey:@"long_name"];
+        NSDictionary *locationDict = [[result objectForKey:@"geometry"] objectForKey:@"location"];
+        NSDictionary *boundsDict = [[result objectForKey:@"geometry"] objectForKey:@"bounds"];
         
-        if([types containsObject:@"locality"])
-            self.locality = [component objectForKey:@"long_name"];
+        CLLocationDegrees lat = [[locationDict objectForKey:@"lat"] doubleValue];
+        CLLocationDegrees lng = [[locationDict objectForKey:@"lng"] doubleValue];
+        self.coordinate = CLLocationCoordinate2DMake(lat, lng);
+        self.location = [[CLLocation alloc] initWithLatitude:lat longitude:lng];
         
-        if([types containsObject:@"administrative_area_level_2"])
-            self.subAdministrativeArea = [component objectForKey:@"long_name"];
-        
-        if([types containsObject:@"administrative_area_level_1"]) {
-            self.administrativeArea = [component objectForKey:@"long_name"];
-            self.administrativeAreaCode = [component objectForKey:@"short_name"];
-        }
-        
-        if([types containsObject:@"country"]) {
-            self.country = [component objectForKey:@"long_name"];
-            self.ISOcountryCode = [component objectForKey:@"short_name"];
-        }
-        
-        if([types containsObject:@"postal_code"])
-            self.postalCode = [component objectForKey:@"long_name"];
-        
-    }];
-    
-    NSDictionary *locationDict = [[result objectForKey:@"geometry"] objectForKey:@"location"];
-    NSDictionary *boundsDict = [[result objectForKey:@"geometry"] objectForKey:@"bounds"];
-    
-    CLLocationDegrees lat = [[locationDict objectForKey:@"lat"] doubleValue];
-    CLLocationDegrees lng = [[locationDict objectForKey:@"lng"] doubleValue];
-    self.coordinate = CLLocationCoordinate2DMake(lat, lng);
-    self.location = [[CLLocation alloc] initWithLatitude:lat longitude:lng];
-    
-    NSDictionary *northEastDict = [boundsDict objectForKey:@"northeast"];
-    NSDictionary *southWestDict = [boundsDict objectForKey:@"southwest"];
-    CLLocationDegrees northEastLatitude = [[northEastDict objectForKey:@"lat"] doubleValue];
-    CLLocationDegrees southWestLatitude = [[southWestDict objectForKey:@"lat"] doubleValue];
-    CLLocationDegrees latitudeDelta = fabs(northEastLatitude - southWestLatitude);
-    CLLocationDegrees northEastLongitude = [[northEastDict objectForKey:@"lng"] doubleValue];
-    CLLocationDegrees southWestLongitude = [[southWestDict objectForKey:@"lng"] doubleValue];
-    CLLocationDegrees longitudeDelta = fabs(northEastLongitude - southWestLongitude);
-    MKCoordinateSpan span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta);
-    self.region = MKCoordinateRegionMake(self.location.coordinate, span);
+        NSDictionary *northEastDict = [boundsDict objectForKey:@"northeast"];
+        NSDictionary *southWestDict = [boundsDict objectForKey:@"southwest"];
+        CLLocationDegrees northEastLatitude = [[northEastDict objectForKey:@"lat"] doubleValue];
+        CLLocationDegrees southWestLatitude = [[southWestDict objectForKey:@"lat"] doubleValue];
+        CLLocationDegrees latitudeDelta = fabs(northEastLatitude - southWestLatitude);
+        CLLocationDegrees northEastLongitude = [[northEastDict objectForKey:@"lng"] doubleValue];
+        CLLocationDegrees southWestLongitude = [[southWestDict objectForKey:@"lng"] doubleValue];
+        CLLocationDegrees longitudeDelta = fabs(northEastLongitude - southWestLongitude);
+        MKCoordinateSpan span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta);
+        self.region = MKCoordinateRegionMake(self.location.coordinate, span);
+    }
     
     return self;
 }
