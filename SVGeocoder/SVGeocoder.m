@@ -126,7 +126,7 @@ typedef NSUInteger SVGeocoderState;
     [self.operationRequest setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
-    [parameters setValue:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode] forKey:@"language"];
+    [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
     [self addParametersToRequest:parameters];
         
     self.state = SVGeocoderStateReady;
