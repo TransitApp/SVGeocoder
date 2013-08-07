@@ -21,6 +21,12 @@ enum {
 
 typedef NSUInteger SVGeocoderState;
 
+SVGeocoderRectangularRegion SVGeocoderRectangularRegionMake(CLLocationCoordinate2D southwest, CLLocationCoordinate2D northeast) {
+  SVGeocoderRectangularRegion rectReg;
+  rectReg.southwest = southwest;
+  rectReg.northeast = northeast;
+  return rectReg;
+}
 
 @interface NSString (URLEncoding)
 - (NSString*)encodedURLParameterString;
@@ -79,6 +85,12 @@ typedef NSUInteger SVGeocoderState;
     return geocoder;
 }
 
++ (SVGeocoder *)geocode:(NSString *)address rectangularRegion:(SVGeocoderRectangularRegion)region completion:(SVGeocoderCompletionHandler)block {
+    SVGeocoder *geocoder = [[self alloc] initWithAddress:address rectangularRegion:region completion:block];
+    [geocoder start];
+    return geocoder;
+}
+
 + (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithCoordinate:coordinate completion:block];
     [geocoder start];
@@ -114,6 +126,19 @@ typedef NSUInteger SVGeocoderState;
                                             coordinateRegion.center.longitude+(coordinateRegion.span.longitudeDelta/2.0)], @"bounds", nil];
     
     return [self initWithParameters:parameters completion:block];
+}
+
+
+- (SVGeocoder*)initWithAddress:(NSString *)address rectangularRegion:(SVGeocoderRectangularRegion)region completion:(SVGeocoderCompletionHandler)block {
+  NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       address, @"address",
+                                       [NSString stringWithFormat:@"%f,%f|%f,%f",
+                                            region.southwest.latitude,
+                                            region.southwest.longitude,
+                                            region.northeast.latitude,
+                                            region.northeast.longitude], @"bounds", nil];
+  
+  return [self initWithParameters:parameters completion:block];
 }
 
 
