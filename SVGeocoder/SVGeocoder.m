@@ -26,6 +26,7 @@ typedef NSUInteger SVGeocoderState;
 - (NSString*)encodedURLParameterString;
 @end
 
+static NSString *customLocale;
 
 @interface SVGeocoder ()
 
@@ -116,6 +117,13 @@ typedef NSUInteger SVGeocoderState;
     return [self initWithParameters:parameters completion:block];
 }
 
+#pragma mark - Custom locale
+
++ (void)setCustomeLocale:(NSString *)locale
+{
+    customLocale = locale;
+}
+
 
 #pragma mark - Private Utility Methods
 
@@ -126,7 +134,11 @@ typedef NSUInteger SVGeocoderState;
     [self.operationRequest setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
-    [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
+    if (customLocale == nil) {
+        [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
+    } else {
+        [parameters setValue:customLocale forKey:@"language"];
+    }
     [self addParametersToRequest:parameters];
         
     self.state = SVGeocoderStateReady;
