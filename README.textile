@@ -64,10 +64,10 @@ There's also a @region@ (@MKCoordinateRegion@) property in case the returned pla
 
 h2. Google Maps API Token
 
-You can include a Google Maps API token by initializing the geocoder and setting it.
+You can include a Google Maps API token by initializing the geocoder and setting it. You should use the default initializers to include the token.
 
 <pre>
-    [geocoder setGoogleMapsToken:@"token"];
+[geocoder setGoogleMapsToken:@"token"];
 </pre>
 
 h2. Credits

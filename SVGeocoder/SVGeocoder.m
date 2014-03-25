@@ -118,7 +118,7 @@ typedef NSUInteger SVGeocoderState;
 
 - (void)setGoogleMapsToken:(NSString *)token {
 
-    [self addParametersToRequest:[@{@"token": token} mutableCopy]];
+    [self addParametersToRequest:[@{@"key": token} mutableCopy]];
     
 }
 
