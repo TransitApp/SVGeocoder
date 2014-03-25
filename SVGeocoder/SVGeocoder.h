@@ -36,6 +36,7 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
+- (void)setGoogleMapsToken:(NSString*)token;
 - (void)start;
 - (void)cancel;
 

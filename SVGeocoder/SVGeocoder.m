@@ -116,6 +116,11 @@ typedef NSUInteger SVGeocoderState;
     return [self initWithParameters:parameters completion:block];
 }
 
+- (void)setGoogleMapsToken:(NSString *)token {
+
+    [self addParametersToRequest:[@{@"token": token} mutableCopy]];
+    
+}
 
 #pragma mark - Private Utility Methods
 
