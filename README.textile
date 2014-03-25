@@ -62,6 +62,13 @@ SVPlacemark is now a simple NSObject. Here's a sample placemark returned for str
 
 There's also a @region@ (@MKCoordinateRegion@) property in case the returned placemark isn't a pinned location, and a @location@ (@CLLocation@) convenience property. 
 
+h2. Google Maps API Token
+
+You can include a Google Maps API token by initializing the geocoder and setting it.
+
+<pre>
+    [geocoder setGoogleMapsToken:@"token"];
+</pre>
 
 h2. Credits
 
