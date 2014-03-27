@@ -43,6 +43,8 @@ typedef NSUInteger SVGeocoderState;
 
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
 - (void)finish;
+- (NSString*)createComponentsStringFromDictionary:(NSDictionary *)components;
+- (NSString*)createBoundsStringFromRegion:(CLRegion *)region;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 - (void)callCompletionBlockWithResponse:(id)response error:(NSError *)error;
@@ -79,6 +81,18 @@ typedef NSUInteger SVGeocoderState;
     return geocoder;
 }
 
++ (SVGeocoder*)geocode:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
+    SVGeocoder *geocoder = [[self alloc] initWithAddress:address components:components completion:block];
+    [geocoder start];
+    return geocoder;
+}
+
++ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
+    SVGeocoder *geocoder = [[self alloc] initWithAddress:address region:region components:components completion:block];
+    [geocoder start];
+    return geocoder;
+}
+
 + (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithCoordinate:coordinate completion:block];
     [geocoder start];
@@ -104,18 +118,36 @@ typedef NSUInteger SVGeocoderState;
 
 
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
-    MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
+    NSString *bounds = [self createBoundsStringFromRegion:region];
+    
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
-                                       [NSString stringWithFormat:@"%f,%f|%f,%f", 
-                                            coordinateRegion.center.latitude-(coordinateRegion.span.latitudeDelta/2.0),
-                                            coordinateRegion.center.longitude-(coordinateRegion.span.longitudeDelta/2.0),
-                                            coordinateRegion.center.latitude+(coordinateRegion.span.latitudeDelta/2.0),
-                                            coordinateRegion.center.longitude+(coordinateRegion.span.longitudeDelta/2.0)], @"bounds", nil];
+                                       bounds,  @"bounds", nil];
     
     return [self initWithParameters:parameters completion:block];
 }
 
+- (SVGeocoder*)initWithAddress:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
+    NSString *componentsValue = [self createComponentsStringFromDictionary:components];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       address,         @"address",
+                                       componentsValue, @"components", nil];
+    
+    return [self initWithParameters:parameters completion:block];
+}
+
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
+    NSString *bounds = [self createBoundsStringFromRegion:region];
+    NSString *componentsValue = [self createComponentsStringFromDictionary:components];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       address,         @"address",
+                                       bounds,          @"bounds",
+                                       componentsValue, @"components", nil];
+    
+    return [self initWithParameters:parameters completion:block];
+}
 
 #pragma mark - Private Utility Methods
 
@@ -162,10 +194,35 @@ typedef NSUInteger SVGeocoderState;
         timeoutTimer = newTimer;
 }
 
+- (NSString*)createComponentsStringFromDictionary:(NSDictionary *)components {
+    NSMutableArray *preparedComponents = [NSMutableArray new];
+    
+    [components enumerateKeysAndObjectsUsingBlock:^(NSString* key, NSString* value, BOOL *stop) {
+        NSString *component = [NSString stringWithFormat:@"%@:%@", key, value];
+        [preparedComponents addObject:component];
+    }];
+    
+    NSString *componentsValue = [preparedComponents componentsJoinedByString:@"|"];
+    
+    return componentsValue;
+}
+
+- (NSString*)createBoundsStringFromRegion:(CLRegion *)region {
+    MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
+    
+    NSString *bounds = [NSString stringWithFormat:@"%f,%f|%f,%f",
+                         coordinateRegion.center.latitude-(coordinateRegion.span.latitudeDelta/2.0),
+                         coordinateRegion.center.longitude-(coordinateRegion.span.longitudeDelta/2.0),
+                         coordinateRegion.center.latitude+(coordinateRegion.span.latitudeDelta/2.0),
+                        coordinateRegion.center.longitude+(coordinateRegion.span.longitudeDelta/2.0)];
+    
+    return bounds;
+}
+
 #pragma mark - NSOperation methods
 
 - (void)start {
-        
+    
     if(self.isCancelled) {
         [self finish];
         return;
