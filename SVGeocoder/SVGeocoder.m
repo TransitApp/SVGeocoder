@@ -20,7 +20,7 @@ enum {
 };
 
 typedef NSUInteger SVGeocoderState;
-
+static NSString *googleMapsAPIKey;
 
 @interface NSString (URLEncoding)
 - (NSString*)encodedURLParameterString;
@@ -42,9 +42,11 @@ typedef NSUInteger SVGeocoderState;
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block;
 
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
+
 - (void)finish;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+
 - (void)callCompletionBlockWithResponse:(id)response error:(NSError *)error;
 
 @end
@@ -102,7 +104,6 @@ typedef NSUInteger SVGeocoderState;
     return [self initWithParameters:parameters completion:block];
 }
 
-
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
     MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
@@ -116,9 +117,9 @@ typedef NSUInteger SVGeocoderState;
     return [self initWithParameters:parameters completion:block];
 }
 
-- (void)setGoogleMapsToken:(NSString *)token {
++ (void)setGoogleMapsAPIKey:(NSString *)key {
 
-    [self addParametersToRequest:[@{@"key": token} mutableCopy]];
+    googleMapsAPIKey = [key copy];
     
 }
 
@@ -132,6 +133,11 @@ typedef NSUInteger SVGeocoderState;
 
     [parameters setValue:@"true" forKey:@"sensor"];
     [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
+    
+    if (googleMapsAPIKey) {
+        [parameters setValue:googleMapsAPIKey forKey:@"key"];
+    }
+    
     [self addParametersToRequest:parameters];
         
     self.state = SVGeocoderStateReady;

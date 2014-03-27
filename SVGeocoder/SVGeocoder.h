@@ -26,18 +26,25 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 
 @interface SVGeocoder : NSOperation
 
+// Set static Google Maps API Key for all requests.
+// The key will be included in the request if it's
+// not nil.
++ (void)setGoogleMapsAPIKey:(NSString*)key;
+
 + (SVGeocoder*)geocode:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
+
 + (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
 
 + (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithAddress:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
+
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
-- (void)setGoogleMapsToken:(NSString*)token;
 - (void)start;
+
 - (void)cancel;
 
 @end
