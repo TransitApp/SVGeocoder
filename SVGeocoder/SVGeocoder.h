@@ -39,6 +39,6 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 - (void)start;
 - (void)cancel;
 
-+ (void)setCustomeLocale:(NSString *)locale;
++ (void)setLanguage:(NSString *)language;
 
 @end
