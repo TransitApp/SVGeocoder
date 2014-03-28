@@ -13,6 +13,12 @@
 
 #import "SVPlacemark.h"
 
+#define SVGeocoderComponentRoute     @"route"
+#define SVGeocoderComponentLocality  @"locality"
+#define SVGeocoderAdministrativeArea @"administrative_area"
+#define SVGeocoderPostalCode         @"postal_code"
+#define SVGeocoderCountry            @"country"
+
 typedef enum {
 	SVGeocoderZeroResultsError = 1,
 	SVGeocoderOverQueryLimitError,
@@ -34,12 +40,17 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 + (SVGeocoder*)geocode:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 
 + (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
 
 + (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithAddress:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
+
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
