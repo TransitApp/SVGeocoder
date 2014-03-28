@@ -66,6 +66,8 @@ h2. Google Maps API Key
 
 You can include a Google Maps API Key by setting it before every request. If the key is not used the request will not be authenticated and request limits may apply.
 
+ATTENTION: You should generate a "browser key" (without any referrer) on Google API Console to use SVGecoder this way. iOS keys won't work as they are used in the official Google SDKs only, and they use the bundle identifier to validate the request.
+
 <pre>
 [SVGeocoder setGoogleMapsAPIKey:@"KEY"];
 </pre>
