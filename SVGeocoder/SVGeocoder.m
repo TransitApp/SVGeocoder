@@ -128,7 +128,7 @@ static NSString *googleMapsAPIKey;
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block {
     self = [super init];
     self.operationCompletionBlock = block;
-    self.operationRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
+    self.operationRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://maps.googleapis.com/maps/api/geocode/json"]];
     [self.operationRequest setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
