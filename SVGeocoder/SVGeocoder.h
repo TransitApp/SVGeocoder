@@ -38,6 +38,7 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 + (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
 
 + (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate language:(NSString *)language completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithAddress:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;

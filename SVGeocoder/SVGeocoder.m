@@ -39,7 +39,7 @@ typedef NSUInteger SVGeocoderState;
 @property (nonatomic, strong) NSString *requestPath;
 @property (nonatomic, strong) NSTimer *timeoutTimer; // see http://stackoverflow.com/questions/2736967
 
-- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters language:(NSString *)language completion:(SVGeocoderCompletionHandler)block;
 
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
 - (void)finish;
@@ -94,7 +94,12 @@ typedef NSUInteger SVGeocoderState;
 }
 
 + (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block {
-    SVGeocoder *geocoder = [[self alloc] initWithCoordinate:coordinate completion:block];
+    return [self reverseGeocode:coordinate language:nil completion:block];
+}
+
++ (SVGeocoder *)reverseGeocode:(CLLocationCoordinate2D)coordinate language:(NSString *)language completion:(SVGeocoderCompletionHandler)block
+{
+    SVGeocoder *geocoder = [[self alloc] initWithCoordinate:coordinate language:language completion:block];
     [geocoder start];
     return geocoder;
 }
@@ -102,10 +107,14 @@ typedef NSUInteger SVGeocoderState;
 #pragma mark - Public Initializers
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block {
+    return [self initWithCoordinate:coordinate language:nil completion:block];
+}
+
+- (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate language:(NSString *)language completion:(SVGeocoderCompletionHandler)block {
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        [NSString stringWithFormat:@"%f,%f", coordinate.latitude, coordinate.longitude], @"latlng", nil];
     
-    return [self initWithParameters:parameters completion:block];
+    return [self initWithParameters:parameters language:language completion:block];
 }
 
 
@@ -113,7 +122,7 @@ typedef NSUInteger SVGeocoderState;
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", nil];
     
-    return [self initWithParameters:parameters completion:block];
+    return [self initWithParameters:parameters language:nil completion:block];
 }
 
 
@@ -124,7 +133,7 @@ typedef NSUInteger SVGeocoderState;
                                        address, @"address", 
                                        bounds,  @"bounds", nil];
     
-    return [self initWithParameters:parameters completion:block];
+    return [self initWithParameters:parameters language:nil completion:block];
 }
 
 - (SVGeocoder*)initWithAddress:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
@@ -134,7 +143,7 @@ typedef NSUInteger SVGeocoderState;
                                        address,         @"address",
                                        componentsValue, @"components", nil];
     
-    return [self initWithParameters:parameters completion:block];
+    return [self initWithParameters:parameters language:nil completion:block];
 }
 
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
@@ -146,19 +155,19 @@ typedef NSUInteger SVGeocoderState;
                                        bounds,          @"bounds",
                                        componentsValue, @"components", nil];
     
-    return [self initWithParameters:parameters completion:block];
+    return [self initWithParameters:parameters language:nil completion:block];
 }
 
 #pragma mark - Private Utility Methods
 
-- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block {
+- (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters language:(NSString *)language completion:(SVGeocoderCompletionHandler)block {
     self = [super init];
     self.operationCompletionBlock = block;
     self.operationRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
     [self.operationRequest setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
-    [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
+    [parameters setValue:language ? language : [NSLocale preferredLanguages][0] forKey:@"language"];
     [self addParametersToRequest:parameters];
         
     self.state = SVGeocoderStateReady;
