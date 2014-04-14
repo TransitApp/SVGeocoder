@@ -74,7 +74,7 @@ static NSString *customLanguage;
     return geocoder;
 }
 
-+ (SVGeocoder *)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
++ (SVGeocoder *)geocode:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithAddress:address region:region completion:block];
     [geocoder start];
     return geocoder;
@@ -104,7 +104,7 @@ static NSString *customLanguage;
 }
 
 
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block {
     MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
                                        address, @"address", 
