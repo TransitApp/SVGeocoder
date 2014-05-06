@@ -20,7 +20,7 @@ enum {
 };
 
 typedef NSUInteger SVGeocoderState;
-
+static NSString *googleMapsAPIKey;
 
 @interface NSString (URLEncoding)
 - (NSString*)encodedURLParameterString;
@@ -42,11 +42,13 @@ typedef NSUInteger SVGeocoderState;
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block;
 
 - (void)addParametersToRequest:(NSMutableDictionary*)parameters;
+
 - (void)finish;
 - (NSString*)createComponentsStringFromDictionary:(NSDictionary *)components;
 - (NSString*)createBoundsStringFromRegion:(CLRegion *)region;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+
 - (void)callCompletionBlockWithResponse:(id)response error:(NSError *)error;
 
 @end
@@ -99,6 +101,12 @@ typedef NSUInteger SVGeocoderState;
     return geocoder;
 }
 
++ (void)setGoogleMapsAPIKey:(NSString *)key {
+
+    googleMapsAPIKey = [key copy];
+    
+}
+
 #pragma mark - Public Initializers
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block {
@@ -115,7 +123,6 @@ typedef NSUInteger SVGeocoderState;
     
     return [self initWithParameters:parameters completion:block];
 }
-
 
 - (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
     NSString *bounds = [self createBoundsStringFromRegion:region];
@@ -154,11 +161,16 @@ typedef NSUInteger SVGeocoderState;
 - (SVGeocoder*)initWithParameters:(NSMutableDictionary*)parameters completion:(SVGeocoderCompletionHandler)block {
     self = [super init];
     self.operationCompletionBlock = block;
-    self.operationRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://maps.googleapis.com/maps/api/geocode/json"]];
+    self.operationRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://maps.googleapis.com/maps/api/geocode/json"]];
     [self.operationRequest setTimeoutInterval:kSVGeocoderTimeoutInterval];
 
     [parameters setValue:@"true" forKey:@"sensor"];
     [parameters setValue:[NSLocale preferredLanguages][0] forKey:@"language"];
+    
+    if (googleMapsAPIKey) {
+        [parameters setValue:googleMapsAPIKey forKey:@"key"];
+    }
+    
     [self addParametersToRequest:parameters];
         
     self.state = SVGeocoderStateReady;
