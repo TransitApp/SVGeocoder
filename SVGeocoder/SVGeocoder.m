@@ -45,7 +45,7 @@ static NSString *googleMapsAPIKey;
 
 - (void)finish;
 - (NSString*)createComponentsStringFromDictionary:(NSDictionary *)components;
-- (NSString*)createBoundsStringFromRegion:(CLRegion *)region;
+- (NSString*)createBoundsStringFromRegion:(CLCircularRegion *)region;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 
@@ -77,7 +77,7 @@ static NSString *googleMapsAPIKey;
     return geocoder;
 }
 
-+ (SVGeocoder *)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
++ (SVGeocoder *)geocode:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithAddress:address region:region completion:block];
     [geocoder start];
     return geocoder;
@@ -89,7 +89,7 @@ static NSString *googleMapsAPIKey;
     return geocoder;
 }
 
-+ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
++ (SVGeocoder*)geocode:(NSString *)address region:(CLCircularRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
     SVGeocoder *geocoder = [[self alloc] initWithAddress:address region:region components:components completion:block];
     [geocoder start];
     return geocoder;
@@ -124,7 +124,7 @@ static NSString *googleMapsAPIKey;
     return [self initWithParameters:parameters completion:block];
 }
 
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block {
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block {
     NSString *bounds = [self createBoundsStringFromRegion:region];
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
@@ -144,7 +144,7 @@ static NSString *googleMapsAPIKey;
     return [self initWithParameters:parameters completion:block];
 }
 
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLCircularRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block {
     NSString *bounds = [self createBoundsStringFromRegion:region];
     NSString *componentsValue = [self createComponentsStringFromDictionary:components];
     
@@ -219,7 +219,7 @@ static NSString *googleMapsAPIKey;
     return componentsValue;
 }
 
-- (NSString*)createBoundsStringFromRegion:(CLRegion *)region {
+- (NSString*)createBoundsStringFromRegion:(CLCircularRegion *)region {
     MKCoordinateRegion coordinateRegion = MKCoordinateRegionMakeWithDistance(region.center, region.radius, region.radius);
     
     NSString *bounds = [NSString stringWithFormat:@"%f,%f|%f,%f",
