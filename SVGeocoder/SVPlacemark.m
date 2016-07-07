@@ -12,6 +12,7 @@
 
 @interface SVPlacemark ()
 
+@property (nonatomic, strong, readwrite) NSString *name;
 @property (nonatomic, strong, readwrite) NSString *formattedAddress;
 @property (nonatomic, strong, readwrite) NSString *subThoroughfare;
 @property (nonatomic, strong, readwrite) NSString *thoroughfare;
@@ -38,6 +39,7 @@
 - (id)initWithDictionary:(NSDictionary *)result {
     
     if(self = [super init]) {
+        self.name = [result objectForKey:@"name"];
         self.formattedAddress = [result objectForKey:@"formatted_address"];
         
         NSArray *addressComponents = [result objectForKey:@"address_components"];
@@ -98,21 +100,6 @@
     return self;
 }
 
-- (NSString *)name {
-    if(self.subThoroughfare && self.thoroughfare)
-        return [NSString stringWithFormat:@"%@ %@", self.subThoroughfare, self.thoroughfare];
-    else if(self.thoroughfare)
-        return self.thoroughfare;
-    else if(self.subLocality)
-        return self.subLocality;
-    else if(self.locality)
-        return [NSString stringWithFormat:@"%@, %@", self.locality, self.administrativeAreaCode];
-    else if(self.administrativeArea)
-        return self.administrativeArea;
-    else if(self.country)
-        return self.country;
-    return nil;
-}
 
 - (NSString*)description {
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
