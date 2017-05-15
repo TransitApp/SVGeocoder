@@ -28,6 +28,7 @@
 @property (nonatomic, readwrite) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readwrite) MKCoordinateRegion region;
 @property (nonatomic, strong, readwrite) CLLocation *location;
+@property (nonatomic, readwrite) BOOL partialMatch;
 
 @end
 
@@ -95,6 +96,8 @@
         CLLocationDegrees longitudeDelta = fabs(northEastLongitude - southWestLongitude);
         MKCoordinateSpan span = MKCoordinateSpanMake(latitudeDelta, longitudeDelta);
         self.region = MKCoordinateRegionMake(self.location.coordinate, span);
+      
+        self.partialMatch = [result objectForKey:@"partial_match"];
     }
     
     return self;

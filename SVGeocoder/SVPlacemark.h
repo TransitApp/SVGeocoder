@@ -31,5 +31,6 @@
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readonly) MKCoordinateRegion region;
 @property (nonatomic, strong, readonly) CLLocation *location;
+@property (nonatomic, readonly) BOOL partialMatch;
 
 @end
