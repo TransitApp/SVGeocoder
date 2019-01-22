@@ -36,6 +36,7 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 // The key will be included in the request if it's
 // not nil.
 + (void)setGoogleMapsAPIKey:(NSString*)key;
++ (void)setGoogleMapsAPIURL:(NSString*)url;
 
 + (SVGeocoder*)geocode:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 
