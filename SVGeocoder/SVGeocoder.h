@@ -40,17 +40,17 @@ typedef void (^SVGeocoderCompletionHandler)(NSArray *placemarks, NSHTTPURLRespon
 
 + (SVGeocoder*)geocode:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 
-+ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block;
 + (SVGeocoder*)geocode:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
-+ (SVGeocoder*)geocode:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
++ (SVGeocoder*)geocode:(NSString *)address region:(CLCircularRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
 
 + (SVGeocoder*)reverseGeocode:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
 
 - (SVGeocoder*)initWithAddress:(NSString *)address completion:(SVGeocoderCompletionHandler)block;
 
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLCircularRegion *)region completion:(SVGeocoderCompletionHandler)block;
 - (SVGeocoder*)initWithAddress:(NSString *)address components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
-- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
+- (SVGeocoder*)initWithAddress:(NSString *)address region:(CLCircularRegion *)region components:(NSDictionary *)components completion:(SVGeocoderCompletionHandler)block;
 
 
 - (SVGeocoder*)initWithCoordinate:(CLLocationCoordinate2D)coordinate completion:(SVGeocoderCompletionHandler)block;
