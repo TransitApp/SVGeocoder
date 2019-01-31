@@ -24,6 +24,7 @@
 @property (nonatomic, strong, readwrite) NSString *postalCode;
 @property (nonatomic, strong, readwrite) NSString *country;
 @property (nonatomic, strong, readwrite) NSString *ISOcountryCode;
+@property (nonatomic, strong, readwrite) NSString *locationType;
 
 @property (nonatomic, readwrite) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readwrite) MKCoordinateRegion region;
@@ -34,7 +35,7 @@
 
 @implementation SVPlacemark
 
-@synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, administrativeAreaCode, postalCode, country, ISOcountryCode, coordinate, location, region;
+@synthesize formattedAddress, subThoroughfare, thoroughfare, subLocality, locality, subAdministrativeArea, administrativeArea, administrativeAreaCode, postalCode, country, ISOcountryCode, coordinate, location, region, locationType;
 
 - (id)initWithDictionary:(NSDictionary *)result {
     
@@ -84,7 +85,8 @@
         CLLocationDegrees lng = [[locationDict objectForKey:@"lng"] doubleValue];
         self.coordinate = CLLocationCoordinate2DMake(lat, lng);
         self.location = [[CLLocation alloc] initWithLatitude:lat longitude:lng];
-        
+        self.locationType = [[result objectForKey:@"geometry"] objectForKey:@"location_type"];
+
         NSDictionary *northEastDict = [boundsDict objectForKey:@"northeast"];
         NSDictionary *southWestDict = [boundsDict objectForKey:@"southwest"];
         CLLocationDegrees northEastLatitude = [[northEastDict objectForKey:@"lat"] doubleValue];

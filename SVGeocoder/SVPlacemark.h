@@ -27,6 +27,7 @@
 @property (nonatomic, strong, readonly) NSString *postalCode;
 @property (nonatomic, strong, readonly) NSString *country;
 @property (nonatomic, strong, readonly) NSString *ISOcountryCode;
+@property (nonatomic, strong, readonly) NSString *locationType;
 
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readonly) MKCoordinateRegion region;
