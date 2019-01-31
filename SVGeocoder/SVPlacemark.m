@@ -50,8 +50,14 @@
             if([types containsObject:@"street_number"])
                 self.subThoroughfare = [component objectForKey:@"long_name"];
             
-            if([types containsObject:@"route"])
-                self.thoroughfare = [component objectForKey:@"long_name"];
+            if([types containsObject:@"route"]) {
+                NSString *shortName = [component objectForKey:@"short_name"];
+                if ([self.formattedAddress rangeOfString:shortName].location != NSNotFound) {
+                    self.thoroughfare = shortName;
+                } else {
+                    self.thoroughfare = [component objectForKey:@"long_name"];
+                }
+            }
             
             if([types containsObject:@"administrative_area_level_3"] || [types containsObject:@"sublocality"] || [types containsObject:@"neighborhood"])
                 self.subLocality = [component objectForKey:@"long_name"];
